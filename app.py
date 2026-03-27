@@ -47,7 +47,7 @@ QUESTIONS: List[Question] = [
         id="q2",
         text="Are strong unique passwords required or managed with a password manager?",
         category="Access Control",
-        weight=7,
+        weight=8,
         impact=1.2,
         remediation="Enforce strong unique passwords and deploy a password manager.",
         why_it_matters="Weak or reused passwords are a common path for compromise.",
@@ -137,7 +137,7 @@ QUESTIONS: List[Question] = [
         id="q11",
         text="Are backups tested to confirm they can actually be restored?",
         category="Backup & Recovery",
-        weight=10,
+        weight=9,
         impact=1.4,
         remediation="Run restore tests on a defined schedule and record results.",
         why_it_matters="Untested backups often fail during real incidents when recovery matters most.",
@@ -157,7 +157,7 @@ QUESTIONS: List[Question] = [
         id="q13",
         text="Do employees receive regular cybersecurity awareness training?",
         category="Incident Response",
-        weight=6,
+        weight=7,
         impact=1.1,
         remediation="Provide periodic training on phishing, passwords, safe browsing, and reporting.",
         why_it_matters="Human behavior is a major factor in phishing and credential compromise.",
@@ -167,7 +167,7 @@ QUESTIONS: List[Question] = [
         id="q14",
         text="Do employees know how to report phishing or suspicious activity?",
         category="Incident Response",
-        weight=6,
+        weight=7,
         impact=1.1,
         remediation="Set a simple reporting channel and teach staff when and how to use it.",
         why_it_matters="Fast reporting shortens attacker dwell time and improves containment.",
@@ -178,7 +178,7 @@ QUESTIONS: List[Question] = [
         text="Are admin accounts separate from normal user accounts?",
         category="Access Control",
         weight=8,
-        impact=1.4,
+        impact=1.2,
         remediation="Use dedicated admin accounts for privileged activity and standard accounts for daily work.",
         why_it_matters="Separate admin accounts reduce the impact of phishing and routine misuse.",
         framework_map="NIST PR.AC / CIS Control 5, 6",
@@ -207,7 +207,7 @@ QUESTIONS: List[Question] = [
         id="q18",
         text="Is there a clearly assigned owner for cybersecurity decisions?",
         category="Incident Response",
-        weight=5,
+        weight=6,
         impact=1.1,
         remediation="Assign a named owner for security decisions, escalation, and accountability.",
         why_it_matters="Ownership is necessary to drive remediation and maintain security practices.",
@@ -374,15 +374,15 @@ def generate_ai_report(payload: Dict) -> str:
 
     user_prompt = f"Assessment JSON:\n{json.dumps(payload, indent=2)}"
 
-    response = client.responses.create(
-        model="gpt-4.1-mini",
-        input=[
+    response = client.chat.completions.create(
+        model="gpt-4o-mini",
+        messages=[
             {"role": "system", "content": system_prompt},
             {"role": "user", "content": user_prompt},
         ],
         temperature=0.2,
     )
-    return response.output_text
+    return response.choices[0].message.content
 
 
 # -----------------------------
