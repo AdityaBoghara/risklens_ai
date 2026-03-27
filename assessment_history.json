@@ -1,0 +1,126 @@
+{
+  "Sample Organization": [
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 59,
+      "risk_level": "High",
+      "category_scores": {
+        "Access Control": 63,
+        "Endpoint Security": 77,
+        "Data Protection": 65,
+        "Patch Management": 0,
+        "Backup & Recovery": 74,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 70,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 100,
+        "Endpoint Security": 77,
+        "Data Protection": 65,
+        "Patch Management": 0,
+        "Backup & Recovery": 74,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 80,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 77,
+        "Data Protection": 82,
+        "Patch Management": 47,
+        "Backup & Recovery": 100,
+        "Incident Response": 88
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 89,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 77,
+        "Data Protection": 82,
+        "Patch Management": 100,
+        "Backup & Recovery": 100,
+        "Incident Response": 100
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 86,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 91,
+        "Endpoint Security": 100,
+        "Data Protection": 80,
+        "Patch Management": 76,
+        "Backup & Recovery": 76,
+        "Incident Response": 88
+      }
+    }
+  ],
+  "Org 2": [
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 85,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 92,
+        "Endpoint Security": 100,
+        "Data Protection": 79,
+        "Patch Management": 76,
+        "Backup & Recovery": 76,
+        "Incident Response": 85
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 89,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 92,
+        "Endpoint Security": 100,
+        "Data Protection": 79,
+        "Patch Management": 76,
+        "Backup & Recovery": 76,
+        "Incident Response": 100
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 89,
+      "risk_level": "Low",
+      "category_scores": {
+        "Access Control": 92,
+        "Endpoint Security": 100,
+        "Data Protection": 79,
+        "Patch Management": 76,
+        "Backup & Recovery": 76,
+        "Incident Response": 100
+      }
+    }
+  ]
+}

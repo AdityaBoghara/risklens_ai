@@ -1,0 +1,233 @@
+{
+  "questions": [
+    {
+      "id": "q1",
+      "text": "Do all employees use multi-factor authentication for email and critical systems?",
+      "category": "Access Control",
+      "weight": 10,
+      "impact": 1.5,
+      "remediation": "Enable MFA on email, VPN, admin portals, and cloud apps for all users.",
+      "why_it_matters": "MFA sharply reduces account-takeover risk when passwords are stolen.",
+      "framework_map": "NIST PR.AA / CIS Control 6 / ISO 27001 A.9.4.2"
+    },
+    {
+      "id": "q2",
+      "text": "Are strong unique passwords required or managed with a password manager?",
+      "category": "Access Control",
+      "weight": 8,
+      "impact": 1.2,
+      "remediation": "Enforce strong unique passwords and deploy a password manager.",
+      "why_it_matters": "Weak or reused passwords are a common path for compromise.",
+      "framework_map": "NIST PR.AA / CIS Control 5 / ISO 27001 A.9.4.3"
+    },
+    {
+      "id": "q3",
+      "text": "Are former employees removed from systems promptly after leaving?",
+      "category": "Access Control",
+      "weight": 8,
+      "impact": 1.3,
+      "remediation": "Create an offboarding checklist that disables accounts and revokes access immediately.",
+      "why_it_matters": "Stale accounts increase the chance of unauthorized access.",
+      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.6"
+    },
+    {
+      "id": "q4",
+      "text": "Are company laptops and desktops protected with antivirus or EDR tools?",
+      "category": "Endpoint Security",
+      "weight": 8,
+      "impact": 1.2,
+      "remediation": "Install and centrally manage endpoint protection on all company devices.",
+      "why_it_matters": "Endpoint controls help detect malware, ransomware, and suspicious execution.",
+      "framework_map": "NIST PR.IP / CIS Control 10 / ISO 27001 A.12.2.1"
+    },
+    {
+      "id": "q5",
+      "text": "Are company devices encrypted in case they are lost or stolen?",
+      "category": "Endpoint Security",
+      "weight": 7,
+      "impact": 1.2,
+      "remediation": "Enable full-disk encryption on laptops and mobile devices.",
+      "why_it_matters": "Encryption prevents data exposure when devices are lost, stolen, or repurposed.",
+      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.10.1.1"
+    },
+    {
+      "id": "q6",
+      "text": "Are operating systems and business software updated on a regular schedule?",
+      "category": "Patch Management",
+      "weight": 9,
+      "impact": 1.3,
+      "remediation": "Establish patching windows and track critical updates to completion.",
+      "why_it_matters": "Unpatched systems are often exploited through known vulnerabilities.",
+      "framework_map": "NIST PR.IP / CIS Control 7 / ISO 27001 A.12.6.1"
+    },
+    {
+      "id": "q7",
+      "text": "Do you track which systems are missing critical security patches?",
+      "category": "Patch Management",
+      "weight": 8,
+      "impact": 1.2,
+      "remediation": "Maintain an asset and patch compliance inventory with exception tracking.",
+      "why_it_matters": "You cannot remediate patch gaps reliably without visibility.",
+      "framework_map": "NIST ID.AM / CIS Control 1, 7 / ISO 27001 A.8.1.1, A.12.6.1"
+    },
+    {
+      "id": "q8",
+      "text": "Is sensitive business or customer data stored securely?",
+      "category": "Data Protection",
+      "weight": 8,
+      "impact": 1.3,
+      "remediation": "Classify sensitive data and secure it using approved storage and access controls.",
+      "why_it_matters": "Improper storage increases exposure risk and regulatory impact.",
+      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.8.2.3"
+    },
+    {
+      "id": "q9",
+      "text": "Is access to sensitive data limited only to people who need it?",
+      "category": "Data Protection",
+      "weight": 7,
+      "impact": 1.3,
+      "remediation": "Apply least-privilege access and review permissions regularly.",
+      "why_it_matters": "Overbroad access increases both internal misuse and breach blast radius.",
+      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.3"
+    },
+    {
+      "id": "q10",
+      "text": "Are important files and systems backed up automatically?",
+      "category": "Backup & Recovery",
+      "weight": 10,
+      "impact": 1.4,
+      "remediation": "Implement automated backups for critical data and systems.",
+      "why_it_matters": "Backups are essential for recovery from ransomware, deletion, or outage.",
+      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1"
+    },
+    {
+      "id": "q11",
+      "text": "Are backups tested to confirm they can actually be restored?",
+      "category": "Backup & Recovery",
+      "weight": 9,
+      "impact": 1.4,
+      "remediation": "Run restore tests on a defined schedule and record results.",
+      "why_it_matters": "Untested backups often fail during real incidents when recovery matters most.",
+      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1"
+    },
+    {
+      "id": "q12",
+      "text": "Do you have a documented plan for responding to a cyber incident?",
+      "category": "Incident Response",
+      "weight": 9,
+      "impact": 1.3,
+      "remediation": "Create a concise incident response playbook with roles, contacts, and escalation steps.",
+      "why_it_matters": "A defined response plan reduces confusion, downtime, and damage during incidents.",
+      "framework_map": "NIST RS / CIS Control 17 / ISO 27001 A.16.1.1"
+    },
+    {
+      "id": "q13",
+      "text": "Do employees receive regular cybersecurity awareness training?",
+      "category": "Incident Response",
+      "weight": 7,
+      "impact": 1.1,
+      "remediation": "Provide periodic training on phishing, passwords, safe browsing, and reporting.",
+      "why_it_matters": "Human behavior is a major factor in phishing and credential compromise.",
+      "framework_map": "NIST PR.AT / CIS Control 14 / ISO 27001 A.7.2.2"
+    },
+    {
+      "id": "q14",
+      "text": "Do employees know how to report phishing or suspicious activity?",
+      "category": "Incident Response",
+      "weight": 7,
+      "impact": 1.1,
+      "remediation": "Set a simple reporting channel and teach staff when and how to use it.",
+      "why_it_matters": "Fast reporting shortens attacker dwell time and improves containment.",
+      "framework_map": "NIST RS.AN / CIS Control 17 / ISO 27001 A.16.1.2"
+    },
+    {
+      "id": "q15",
+      "text": "Are admin accounts separate from normal user accounts?",
+      "category": "Access Control",
+      "weight": 8,
+      "impact": 1.2,
+      "remediation": "Use dedicated admin accounts for privileged activity and standard accounts for daily work.",
+      "why_it_matters": "Separate admin accounts reduce the impact of phishing and routine misuse.",
+      "framework_map": "NIST PR.AC / CIS Control 5, 6 / ISO 27001 A.9.2.3"
+    },
+    {
+      "id": "q16",
+      "text": "Do you monitor for suspicious login attempts or unusual account activity?",
+      "category": "Access Control",
+      "weight": 7,
+      "impact": 1.2,
+      "remediation": "Enable alerting for anomalous logins, failed attempts, and impossible travel.",
+      "why_it_matters": "Identity monitoring helps surface active account abuse early.",
+      "framework_map": "NIST DE.CM / CIS Control 8 / ISO 27001 A.12.4.1"
+    },
+    {
+      "id": "q17",
+      "text": "Are third-party tools or vendors reviewed before getting access to business data?",
+      "category": "Data Protection",
+      "weight": 5,
+      "impact": 1.1,
+      "remediation": "Establish a lightweight vendor review checklist before granting access.",
+      "why_it_matters": "Third parties can introduce security and compliance risk into your environment.",
+      "framework_map": "NIST ID.SC / CIS Control 15 / ISO 27001 A.15.1.1"
+    },
+    {
+      "id": "q18",
+      "text": "Is there a clearly assigned owner for cybersecurity decisions?",
+      "category": "Incident Response",
+      "weight": 6,
+      "impact": 1.1,
+      "remediation": "Assign a named owner for security decisions, escalation, and accountability.",
+      "why_it_matters": "Ownership is necessary to drive remediation and maintain security practices.",
+      "framework_map": "NIST ID.GV / CIS Control 17 / ISO 27001 A.6.1.1"
+    }
+  ],
+  "answer_factors": {
+    "Yes": 0.0,
+    "Partially": 0.5,
+    "No": 1.0,
+    "Don't Know": 1.0
+  },
+  "urgency_factors": {
+    "Yes": 0.0,
+    "Partially": 0.7,
+    "No": 1.0,
+    "Don't Know": 0.9
+  },
+  "category_order": [
+    "Access Control",
+    "Endpoint Security",
+    "Data Protection",
+    "Patch Management",
+    "Backup & Recovery",
+    "Incident Response"
+  ],
+  "org_type_weight_overrides": {
+    "Clinic": {
+      "q8":  12,
+      "q9":  11,
+      "q5":  10,
+      "q17": 9,
+      "q10": 12,
+      "q11": 11
+    },
+    "School": {
+      "q13": 11,
+      "q14": 11,
+      "q8":  11,
+      "q9":  10,
+      "q1":  11
+    },
+    "Nonprofit": {
+      "q18": 10,
+      "q12": 11,
+      "q10": 11,
+      "q13": 9
+    },
+    "Startup": {
+      "q6":  11,
+      "q7":  10,
+      "q17": 8,
+      "q3":  10
+    }
+  }
+}

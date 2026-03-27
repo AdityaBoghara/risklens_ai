@@ -1,5 +1,9 @@
+import json
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, List
+
+_DATA = json.loads((Path(__file__).parent / "questions.json").read_text())
 
 
 @dataclass
@@ -14,243 +18,17 @@ class Question:
     framework_map: str
 
 
-QUESTIONS: List[Question] = [
-    Question(
-        id="q1",
-        text="Do all employees use multi-factor authentication for email and critical systems?",
-        category="Access Control",
-        weight=10,
-        impact=1.5,
-        remediation="Enable MFA on email, VPN, admin portals, and cloud apps for all users.",
-        why_it_matters="MFA sharply reduces account-takeover risk when passwords are stolen.",
-        framework_map="NIST PR.AA / CIS Control 6 / ISO 27001 A.9.4.2",
-    ),
-    Question(
-        id="q2",
-        text="Are strong unique passwords required or managed with a password manager?",
-        category="Access Control",
-        weight=8,
-        impact=1.2,
-        remediation="Enforce strong unique passwords and deploy a password manager.",
-        why_it_matters="Weak or reused passwords are a common path for compromise.",
-        framework_map="NIST PR.AA / CIS Control 5 / ISO 27001 A.9.4.3",
-    ),
-    Question(
-        id="q3",
-        text="Are former employees removed from systems promptly after leaving?",
-        category="Access Control",
-        weight=8,
-        impact=1.3,
-        remediation="Create an offboarding checklist that disables accounts and revokes access immediately.",
-        why_it_matters="Stale accounts increase the chance of unauthorized access.",
-        framework_map="NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.6",
-    ),
-    Question(
-        id="q4",
-        text="Are company laptops and desktops protected with antivirus or EDR tools?",
-        category="Endpoint Security",
-        weight=8,
-        impact=1.2,
-        remediation="Install and centrally manage endpoint protection on all company devices.",
-        why_it_matters="Endpoint controls help detect malware, ransomware, and suspicious execution.",
-        framework_map="NIST PR.IP / CIS Control 10 / ISO 27001 A.12.2.1",
-    ),
-    Question(
-        id="q5",
-        text="Are company devices encrypted in case they are lost or stolen?",
-        category="Endpoint Security",
-        weight=7,
-        impact=1.2,
-        remediation="Enable full-disk encryption on laptops and mobile devices.",
-        why_it_matters="Encryption prevents data exposure when devices are lost, stolen, or repurposed.",
-        framework_map="NIST PR.DS / CIS Control 3 / ISO 27001 A.10.1.1",
-    ),
-    Question(
-        id="q6",
-        text="Are operating systems and business software updated on a regular schedule?",
-        category="Patch Management",
-        weight=9,
-        impact=1.3,
-        remediation="Establish patching windows and track critical updates to completion.",
-        why_it_matters="Unpatched systems are often exploited through known vulnerabilities.",
-        framework_map="NIST PR.IP / CIS Control 7 / ISO 27001 A.12.6.1",
-    ),
-    Question(
-        id="q7",
-        text="Do you track which systems are missing critical security patches?",
-        category="Patch Management",
-        weight=8,
-        impact=1.2,
-        remediation="Maintain an asset and patch compliance inventory with exception tracking.",
-        why_it_matters="You cannot remediate patch gaps reliably without visibility.",
-        framework_map="NIST ID.AM / CIS Control 1, 7 / ISO 27001 A.8.1.1, A.12.6.1",
-    ),
-    Question(
-        id="q8",
-        text="Is sensitive business or customer data stored securely?",
-        category="Data Protection",
-        weight=8,
-        impact=1.3,
-        remediation="Classify sensitive data and secure it using approved storage and access controls.",
-        why_it_matters="Improper storage increases exposure risk and regulatory impact.",
-        framework_map="NIST PR.DS / CIS Control 3 / ISO 27001 A.8.2.3",
-    ),
-    Question(
-        id="q9",
-        text="Is access to sensitive data limited only to people who need it?",
-        category="Data Protection",
-        weight=7,
-        impact=1.3,
-        remediation="Apply least-privilege access and review permissions regularly.",
-        why_it_matters="Overbroad access increases both internal misuse and breach blast radius.",
-        framework_map="NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.3",
-    ),
-    Question(
-        id="q10",
-        text="Are important files and systems backed up automatically?",
-        category="Backup & Recovery",
-        weight=10,
-        impact=1.4,
-        remediation="Implement automated backups for critical data and systems.",
-        why_it_matters="Backups are essential for recovery from ransomware, deletion, or outage.",
-        framework_map="NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1",
-    ),
-    Question(
-        id="q11",
-        text="Are backups tested to confirm they can actually be restored?",
-        category="Backup & Recovery",
-        weight=9,
-        impact=1.4,
-        remediation="Run restore tests on a defined schedule and record results.",
-        why_it_matters="Untested backups often fail during real incidents when recovery matters most.",
-        framework_map="NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1",
-    ),
-    Question(
-        id="q12",
-        text="Do you have a documented plan for responding to a cyber incident?",
-        category="Incident Response",
-        weight=9,
-        impact=1.3,
-        remediation="Create a concise incident response playbook with roles, contacts, and escalation steps.",
-        why_it_matters="A defined response plan reduces confusion, downtime, and damage during incidents.",
-        framework_map="NIST RS / CIS Control 17 / ISO 27001 A.16.1.1",
-    ),
-    Question(
-        id="q13",
-        text="Do employees receive regular cybersecurity awareness training?",
-        category="Incident Response",
-        weight=7,
-        impact=1.1,
-        remediation="Provide periodic training on phishing, passwords, safe browsing, and reporting.",
-        why_it_matters="Human behavior is a major factor in phishing and credential compromise.",
-        framework_map="NIST PR.AT / CIS Control 14 / ISO 27001 A.7.2.2",
-    ),
-    Question(
-        id="q14",
-        text="Do employees know how to report phishing or suspicious activity?",
-        category="Incident Response",
-        weight=7,
-        impact=1.1,
-        remediation="Set a simple reporting channel and teach staff when and how to use it.",
-        why_it_matters="Fast reporting shortens attacker dwell time and improves containment.",
-        framework_map="NIST RS.AN / CIS Control 17 / ISO 27001 A.16.1.2",
-    ),
-    Question(
-        id="q15",
-        text="Are admin accounts separate from normal user accounts?",
-        category="Access Control",
-        weight=8,
-        impact=1.2,
-        remediation="Use dedicated admin accounts for privileged activity and standard accounts for daily work.",
-        why_it_matters="Separate admin accounts reduce the impact of phishing and routine misuse.",
-        framework_map="NIST PR.AC / CIS Control 5, 6 / ISO 27001 A.9.2.3",
-    ),
-    Question(
-        id="q16",
-        text="Do you monitor for suspicious login attempts or unusual account activity?",
-        category="Access Control",
-        weight=7,
-        impact=1.2,
-        remediation="Enable alerting for anomalous logins, failed attempts, and impossible travel.",
-        why_it_matters="Identity monitoring helps surface active account abuse early.",
-        framework_map="NIST DE.CM / CIS Control 8 / ISO 27001 A.12.4.1",
-    ),
-    Question(
-        id="q17",
-        text="Are third-party tools or vendors reviewed before getting access to business data?",
-        category="Data Protection",
-        weight=5,
-        impact=1.1,
-        remediation="Establish a lightweight vendor review checklist before granting access.",
-        why_it_matters="Third parties can introduce security and compliance risk into your environment.",
-        framework_map="NIST ID.SC / CIS Control 15 / ISO 27001 A.15.1.1",
-    ),
-    Question(
-        id="q18",
-        text="Is there a clearly assigned owner for cybersecurity decisions?",
-        category="Incident Response",
-        weight=6,
-        impact=1.1,
-        remediation="Assign a named owner for security decisions, escalation, and accountability.",
-        why_it_matters="Ownership is necessary to drive remediation and maintain security practices.",
-        framework_map="NIST ID.GV / CIS Control 17 / ISO 27001 A.6.1.1",
-    ),
-]
+QUESTIONS: List[Question] = [Question(**q) for q in _DATA["questions"]]
 
-ANSWER_FACTORS = {
-    "Yes": 0.0,
-    "Partially": 0.5,
-    "No": 1.0,
-    "Don't Know": 1.0,
-}
+ANSWER_FACTORS: Dict[str, float] = _DATA["answer_factors"]
 
-URGENCY_FACTORS = {
-    "Yes": 0.0,
-    "Partially": 0.7,
-    "No": 1.0,
-    "Don't Know": 0.9,
-}
+URGENCY_FACTORS: Dict[str, float] = _DATA["urgency_factors"]
 
-CATEGORY_ORDER = [
-    "Access Control",
-    "Endpoint Security",
-    "Data Protection",
-    "Patch Management",
-    "Backup & Recovery",
-    "Incident Response",
-]
+CATEGORY_ORDER: List[str] = _DATA["category_order"]
 
 # Per-org-type weight overrides: only questions that differ from the baseline are listed.
 # Clinics must protect patient data (HIPAA) → elevate Data Protection and device encryption.
 # Schools face heavy phishing exposure and handle student records → elevate training and data controls.
 # Nonprofits are often under-resourced with no dedicated security owner → elevate governance and IR.
 # Startups move fast and accumulate patch debt quickly → elevate Patch Management.
-ORG_TYPE_WEIGHT_OVERRIDES: Dict[str, Dict[str, int]] = {
-    "Clinic": {
-        "q8":  12,  # sensitive data stored securely (baseline 8) — HIPAA data-at-rest
-        "q9":  11,  # access to sensitive data limited (baseline 7) — minimum necessary rule
-        "q5":  10,  # device encryption (baseline 7) — PHI on laptops
-        "q17": 9,   # vendor review (baseline 5) — BAA / third-party risk
-        "q10": 12,  # automated backups (baseline 10) — care-continuity requirement
-        "q11": 11,  # backup restore tests (baseline 9)
-    },
-    "School": {
-        "q13": 11,  # cybersecurity awareness training (baseline 7) — staff phishing risk
-        "q14": 11,  # phishing reporting (baseline 7) — early detection
-        "q8":  11,  # sensitive data stored securely (baseline 8) — student records / FERPA
-        "q9":  10,  # access to sensitive data limited (baseline 7)
-        "q1":  11,  # MFA (baseline 10) — shared-device environments
-    },
-    "Nonprofit": {
-        "q18": 10,  # assigned security owner (baseline 6) — often no dedicated role
-        "q12": 11,  # incident response plan (baseline 9) — limited IT capacity
-        "q10": 11,  # automated backups (baseline 10) — donor/beneficiary data
-        "q13": 9,   # awareness training (baseline 7) — volunteer workforce
-    },
-    "Startup": {
-        "q6":  11,  # OS/software patching (baseline 9) — rapid release cycles
-        "q7":  10,  # patch compliance tracking (baseline 8)
-        "q17": 8,   # vendor/SaaS review (baseline 5) — heavy third-party stack
-        "q3":  10,  # offboarding (baseline 8) — high employee churn
-    },
-}
+ORG_TYPE_WEIGHT_OVERRIDES: Dict[str, Dict[str, int]] = _DATA["org_type_weight_overrides"]
