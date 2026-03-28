@@ -61,7 +61,7 @@ def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
                     "roi_score": roi_score,
                     "effort": q.effort,
                     "time_to_value": q.time_to_value,
-                    "quick_win": q.qwuick_win,
+                    "quick_win": q.quick_win,
                     "threats": q.threats,
                     "business_impact": q.business_impact,
                     "simulation_gain_hint": q.simulation_gain_hint,

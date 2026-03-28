@@ -507,8 +507,8 @@ else:
         else:
             st.info("No high-risk strategic gaps identified.")
 
-    st.subheader("AI Report")
-    st.text_area("Generated Assessment Report", value=report, height=380)
+    st.subheader("AI Recommendation Agent")
+    st.markdown(report)
 
     with st.expander("Structured JSON Output"):
         st.json(payload)
@@ -529,7 +529,7 @@ else:
     for i, f in enumerate(results["findings"], start=1):
         writer.writerow([i, f["category"], f["question"], f["answer"], f["roi_score"], f["remediation"], f["why_it_matters"], f["framework_map"]])
     writer.writerow([])
-    writer.writerow(["AI Report"])
+    writer.writerow(["AI Recommendation Agent"])
     writer.writerow([report])
 
     st.download_button(

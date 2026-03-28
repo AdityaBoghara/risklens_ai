@@ -11,6 +11,39 @@ try:
 except Exception:
     OpenAI = None
 
+_ORG_SIZE_CONTEXT = {
+    "1-10": (
+        "This is a micro-organization with no dedicated security staff. "
+        "Recommendations must be executable by a non-technical owner or a single IT generalist. "
+        "Favor free/low-cost tools, cloud-managed solutions, and controls that require no ongoing maintenance. "
+        "Complexity is the enemy — every action must be completable in under a day."
+    ),
+    "11-50": (
+        "This is a small organization, likely with one part-time IT person or a managed service provider. "
+        "Favor controls with vendor support or SaaS delivery. "
+        "Avoid recommendations requiring dedicated security headcount. "
+        "Prioritize identity and email controls — the attack surface is small but the blast radius of a breach is high."
+    ),
+    "51-200": (
+        "This is a mid-size organization with some IT capacity but limited security expertise. "
+        "Controls should be implementable within existing IT bandwidth. "
+        "Segmentation and logging become feasible here. "
+        "Emphasize quick wins that do not require procurement cycles."
+    ),
+    "201-1000": (
+        "This organization has dedicated IT and may have a part-time security function. "
+        "More advanced controls (SIEM, EDR, PAM) are realistic. "
+        "Prioritize controls that scale across teams and don't require per-user manual steps. "
+        "Compliance obligations likely apply — tie recommendations to framework mappings."
+    ),
+    "1000+": (
+        "This is a large organization with a formal IT and security team. "
+        "Focus recommendations on gaps in governance, detection, and response — not basic hygiene. "
+        "Assume basic controls (AV, firewall, patching) exist unless the data shows otherwise. "
+        "Emphasize third-party risk, privileged access, and audit trail completeness."
+    ),
+}
+
 _ORG_TYPE_NOTES = {
     "Healthcare": (
         "Healthcare organizations face elevated HIPAA obligations and ransomware targeting of patient data. "
@@ -138,6 +171,10 @@ def build_llm_payload(org_name: str, org_type: str, org_size: str, results: Dict
             org_type,
             f"Assess controls in the context of a {org_type or 'general'} organization's regulatory and threat landscape.",
         ),
+        "org_size_specific_notes": _ORG_SIZE_CONTEXT.get(
+            org_size,
+            f"Tailor recommendations to the capacity and resource constraints of a {org_size or 'general'} organization.",
+        ),
         "confidence_notes": confidence_notes,
     }
 
@@ -147,75 +184,90 @@ def generate_demo_report(payload: Dict) -> str:
     quick_wins = payload.get("quick_wins", [])
     bundle = payload.get("best_30_day_bundle", [])
     best_single = payload.get("best_single_fix_simulation")
-    weakest = payload.get("weakest_categories", [])
     dominant_threats = payload.get("dominant_threats", [])
     confidence_notes = payload.get("confidence_notes", [])
+    blocked = payload.get("blocked_by_dependencies", [])
+    org_type = payload.get("organization_type") or "general"
+    org_size = payload.get("organization_size") or "unknown"
 
-    weakest_text = ", ".join([f"{c['category']} ({c['score']}/100)" for c in weakest])
     threats_text = ", ".join(dominant_threats) if dominant_threats else "ransomware, credential theft"
+    blocked_ids = {b["id"] for b in blocked}
 
     lines = []
 
-    lines.append(
-        f"Executive Summary\n"
-        f"{payload['organization_name']} scored {payload['overall_score']}/100 — a {payload['risk_level']} risk posture. "
-        f"Weakest areas: {weakest_text}. "
-        f"Top active threat vectors: {threats_text}."
-    )
-    if confidence_notes:
-        lines.append(
-            f"Note: {len(confidence_notes)} control(s) were unanswered and scored as worst-case (\"Don't Know\"). "
-            "Revisit these to refine the score."
-        )
-
+    # Biggest Risk Right Now
     if actions:
         top = actions[0]
         lines.append(
-            f"Biggest Risk Right Now\n"
-            f"{top['category']}: {top['why_it_matters']} "
-            f"Remediation: {top['remediation']}"
+            f"## Biggest Risk Right Now\n"
+            f"[{top['category']}] {top['why_it_matters']} "
+            f"For a {org_type} organization of {org_size}, this gap directly exposes you to {threats_text}. "
+            f"Recommended action: {top['remediation']}"
         )
 
+    # Best Quick Win
     if quick_wins:
         qw = quick_wins[0]
         lines.append(
-            f"Best Quick Win\n"
-            f"{qw['remediation']} — effort: {qw['effort']}, value in: {qw['time_to_value']}. "
-            f"Addresses: {', '.join(qw['threats'][:2])}."
+            f"## Best Quick Win\n"
+            f"{qw['remediation']} — effort: {qw['effort']}, time-to-value: {qw['time_to_value']}. "
+            f"Directly reduces: {', '.join(qw['threats'][:2])}. "
+            f"Appropriate for a {org_size} team with no dedicated security staff."
         )
     elif actions:
         qw = actions[0]
         lines.append(
-            f"Best Quick Win\n"
-            f"{qw['remediation']} — tackles the highest-priority unresolved gap."
+            f"## Best Quick Win\n"
+            f"{qw['remediation']} — tackles the highest-priority unresolved gap with available capacity."
         )
 
-    if bundle:
-        lines.append("Best 30-Day Plan")
-        for idx, item in enumerate(bundle, start=1):
-            lines.append(f"Week {idx}: {item['remediation']} ({item['category']}, effort: {item['effort']})")
-    else:
-        lines.append("Best 30-Day Plan")
-        for idx, item in enumerate(actions, start=1):
-            lines.append(f"Week {idx}: {item['remediation']}")
+    # Best 30-Day Plan
+    plan_items = bundle if bundle else actions
+    plan_lines = ["## Best 30-Day Plan"]
+    for idx, item in enumerate(plan_items, start=1):
+        effort = item.get("effort", "—")
+        item_threats = item.get("threats", [])
+        threat_str = f" | closes: {', '.join(item_threats[:2])}" if item_threats else ""
+        blocked_note = " ⚠ blocked — complete dependency first" if item.get("id") in blocked_ids else ""
+        plan_lines.append(
+            f"  Week {idx}: {item['remediation']} ({item['category']}, effort: {effort}{threat_str}{blocked_note})"
+        )
+    lines.append("\n".join(plan_lines))
 
+    # Highest-Impact Fix
     if best_single:
         lines.append(
-            f"What If You Fix One Thing?\n"
+            f"## Highest-Impact Fix\n"
             f"Fixing \"{best_single['question']}\" could improve your score by up to "
-            f"{best_single['simulation_gain_hint']} points — the highest single-control gain available."
+            f"{best_single['simulation_gain_hint']} points — the largest single-control gain available. "
+            f"This control has outsized leverage relative to its effort because it addresses the root cause "
+            f"behind multiple scored gaps."
         )
 
-    lines.append(
-        f"Why These Actions Matter\n"
-        f"The controls above target the gaps most likely to result in an incident for a "
-        f"{payload['organization_type'] or 'general'} organization of your size. "
-        f"{payload.get('org_type_specific_notes', '')}"
-    )
+    # Why These Actions Matter
+    if actions:
+        top = actions[0]
+        lines.append(
+            f"## Why These Actions Matter\n"
+            f"These recommendations are calibrated for a {org_type} organization of {org_size}. "
+            f"{payload.get('org_type_specific_notes', '')} "
+            f"{payload.get('org_size_specific_notes', '')} "
+            f"The sequencing prioritizes controls that close {threats_text} exposure first, "
+            f"then layers in controls that require more time or resources."
+        )
 
-    lines.append("Framework Traceability")
-    for item in actions[:3]:
-        lines.append(f"- {item['question'][:60]}… → {item['framework_map']}")
+    # Confidence / Unknowns
+    if confidence_notes:
+        caveat_lines = [f"## Confidence / Unknowns\n{len(confidence_notes)} control(s) were answered 'Don't Know' and scored as worst-case. Your actual risk may be lower."]
+        for cn in confidence_notes:
+            caveat_lines.append(
+                f"  - [{cn['category']}] \"{cn['question'][:80]}\"\n"
+                f"    If this control already exists: the risk score for this area is likely overstated.\n"
+                f"    Action (within 5 business days): confirm with your IT team whether this control is active and update the assessment."
+            )
+        lines.append("\n".join(caveat_lines))
+    else:
+        lines.append("## Confidence / Unknowns\nAll controls were answered — no confidence gaps to report.")
 
     return "\n\n".join(lines)
 
@@ -227,25 +279,64 @@ def generate_ai_report(payload: Dict) -> str:
 
     client = OpenAI(api_key=api_key)
 
+    org_type = payload.get("organization_type") or "general"
+    org_size = payload.get("organization_size") or "unknown"
+    org_type_notes = payload.get("org_type_specific_notes", "")
+    org_size_notes = payload.get("org_size_specific_notes", "")
+    dominant_threats = ", ".join(payload.get("dominant_threats", [])) or "ransomware, credential theft"
+
     system_prompt = (
-        "You are a cyber risk triage agent for non-technical organizations. "
-        "You must reason only from the provided JSON. "
-        "Prioritize actions by likely risk reduction, effort, and speed to value. "
-        "Explain tradeoffs in plain language. "
-        "Always identify: biggest risk, best quick win, best 30-day plan, and what changes the score most."
+        f"You are a cyber risk triage advisor — not a report writer. "
+        f"Your job is to make hard prioritization calls and tell the organization exactly what to do next, in order. "
+        f"You are advising a {org_type} organization with {org_size} employees.\n\n"
+        f"ORG TYPE CONTEXT: {org_type_notes}\n\n"
+        f"ORG SIZE CONTEXT: {org_size_notes}\n\n"
+        f"TRIAGE RULES YOU MUST FOLLOW:\n"
+        f"- Reason only from the provided JSON data. Do not invent controls or threats not present in the data.\n"
+        f"- Make a single committed decision in every section — never list alternatives or say 'it depends'.\n"
+        f"- Calibrate every recommendation to the capacity of a {org_size}-person {org_type} organization.\n"
+        f"- Use plain language. Avoid jargon. A non-technical executive must be able to act on this immediately.\n"
+        f"- The dominant threats for this org are: {dominant_threats}. Every priority decision must connect back to these threats.\n"
+        f"- If a control is blocked by a dependency, do not recommend it as a first action."
     )
 
+    confidence_count = len(payload.get("confidence_notes", []))
+
     user_prompt = (
-        "Analyze the assessment JSON below and produce a structured report with exactly these sections:\n\n"
-        "1. Executive Summary — 2–3 sentences: overall posture, score, risk level, top threat vectors.\n"
-        "2. Biggest Risk Right Now — the single highest-impact unresolved control and why it matters.\n"
-        "3. Best Quick Win — the fastest, lowest-effort action with meaningful risk reduction. Include effort and time-to-value.\n"
-        "4. Best 30-Day Plan — a week-by-week sequence of the top unblocked controls from best_30_day_bundle.\n"
-        "5. What If You Fix One Thing? — use best_single_fix_simulation to explain the score impact of the highest-gain control.\n"
-        "6. Why These Actions Matter — connect the recommended actions to the org-type context and dominant threats. "
-        "Note any confidence_notes items and how they affect certainty.\n"
-        "7. Framework Traceability — for each top action, cite the framework_map reference.\n\n"
-        f"Assessment JSON:\n{json.dumps(payload, indent=2)}"
+        "Triage the assessment JSON below. Produce output with EXACTLY these six sections — no extras, no reordering.\n\n"
+        "## Biggest Risk Right Now\n"
+        "Name the single unresolved control that poses the greatest threat to this specific org type and size. "
+        "In 2–3 sentences: what is the control, why does it rank #1 given the dominant threats, "
+        "and what is the business consequence if it is not addressed?\n\n"
+        "## Best Quick Win\n"
+        "Name one action the org can complete this week with minimal effort. "
+        "State: what it is, effort level, time-to-value, and which specific threat it removes. "
+        "Calibrate 'minimal effort' to the org's size — do not recommend actions requiring dedicated security staff "
+        "if the org has fewer than 50 employees.\n\n"
+        "## Best 30-Day Plan\n"
+        "Provide a week-by-week action sequence drawn from best_30_day_bundle. "
+        "For each week: name the control, state effort, state the threat it closes. "
+        "Sequence these so each week builds on the last (dependency order). "
+        "If a control is in blocked_by_dependencies, move it after its blocker.\n\n"
+        "## Highest-Impact Fix\n"
+        "Use best_single_fix_simulation. Name the single control whose remediation would produce the largest "
+        "score improvement. State the projected point gain and why that control has outsized leverage "
+        "relative to its effort.\n\n"
+        "## Why These Actions Matter\n"
+        "In 3–5 sentences: connect the recommended actions to the specific threat landscape of a "
+        f"{org_type} organization of {org_size} employees. Reference the org_type_specific_notes and "
+        "org_size_specific_notes from the JSON. Explain why the sequencing is correct for this org's capacity.\n\n"
+        "## Confidence / Unknowns\n"
+        + (
+            f"There are {confidence_count} controls answered 'Don't Know' in confidence_notes. "
+            "For each one, write:\n"
+            "- Control name and category\n"
+            "- What the actual risk exposure is IF the control already exists (i.e., score may be inflated)\n"
+            "- One concrete action to resolve the uncertainty within 5 business days\n"
+            if confidence_count > 0
+            else "All controls were answered — no confidence gaps to report.\n"
+        )
+        + f"\nAssessment JSON:\n{json.dumps(payload, indent=2)}"
     )
 
     try:
