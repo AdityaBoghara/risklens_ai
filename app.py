@@ -1,5 +1,6 @@
 import csv
 import io
+import random
 from collections import defaultdict
 
 import xlsxwriter
@@ -55,36 +56,59 @@ def _render_narrative_trend(all_entries: list) -> None:
 
 
 # ---------------------------------------------------------------------------
-# Demo mode: pre-filled "small clinic with critical gaps" scenario
+# Demo mode: randomized scenario so each run produces unique results
 # ---------------------------------------------------------------------------
-CLINIC_DEMO_ANSWERS = {
-    "q1": "No",          # No MFA
-    "q2": "Partially",   # Weak password hygiene
-    "q3": "No",          # Former employees not removed promptly
-    "q4": "Yes",         # Basic antivirus present
-    "q5": "No",          # Devices not encrypted
-    "q6": "Partially",   # Irregular patching
-    "q7": "No",          # No patch tracking
-    "q8": "Partially",   # Patient data partially secured
-    "q9": "No",          # Broad data access
-    "q10": "Yes",        # Backups exist
-    "q11": "No",         # Backups never tested
-    "q12": "No",         # No incident response plan
-    "q13": "No",         # No security training
-    "q14": "Partially",  # Some phishing awareness
-    "q15": "No",         # No separate admin accounts
-    "q16": "No",         # No login monitoring
-    "q17": "Don't Know", # Vendor review unknown
-    "q18": "No",         # No security owner
+
+# Weighted pools per question: (answer, weight) — realistic small-org distribution
+_DEMO_ANSWER_POOLS = {
+    "q1":  [("No", 40), ("Partially", 35), ("Yes", 25)],
+    "q2":  [("Partially", 40), ("No", 30), ("Yes", 30)],
+    "q3":  [("No", 35), ("Partially", 35), ("Yes", 30)],
+    "q4":  [("Yes", 45), ("Partially", 35), ("No", 20)],
+    "q5":  [("No", 40), ("Partially", 30), ("Yes", 30)],
+    "q6":  [("Partially", 40), ("No", 35), ("Yes", 25)],
+    "q7":  [("No", 45), ("Partially", 30), ("Yes", 25)],
+    "q8":  [("Partially", 40), ("No", 30), ("Yes", 30)],
+    "q9":  [("No", 40), ("Partially", 30), ("Yes", 30)],
+    "q10": [("Yes", 50), ("Partially", 30), ("No", 20)],
+    "q11": [("No", 45), ("Partially", 30), ("Yes", 25)],
+    "q12": [("No", 45), ("Partially", 30), ("Yes", 25)],
+    "q13": [("No", 40), ("Partially", 35), ("Yes", 25)],
+    "q14": [("Partially", 40), ("No", 30), ("Yes", 30)],
+    "q15": [("No", 45), ("Partially", 25), ("Yes", 30)],
+    "q16": [("No", 40), ("Partially", 30), ("Yes", 30)],
+    "q17": [("Don't Know", 40), ("No", 30), ("Partially", 20), ("Yes", 10)],
+    "q18": [("No", 45), ("Partially", 30), ("Yes", 25)],
 }
 
-def _load_clinic_demo() -> None:
-    st.session_state.answers = dict(CLINIC_DEMO_ANSWERS)
-    for qid, ans in CLINIC_DEMO_ANSWERS.items():
+_DEMO_ORG_PROFILES = [
+    ("Riverside Family Clinic", "Clinic", "11-50 employees"),
+    ("Maplewood Community School", "School", "51-200 employees"),
+    ("Helping Hands Nonprofit", "Nonprofit", "1-10 employees"),
+    ("Apex Startup Labs", "Startup", "1-10 employees"),
+    ("Summit Hardware Co.", "Small Business", "11-50 employees"),
+    ("Cedar Valley Credit Union", "Small Business", "51-200 employees"),
+    ("Brightpath Youth Foundation", "Nonprofit", "11-50 employees"),
+    ("Lakeside Pediatric Clinic", "Clinic", "1-10 employees"),
+    ("NovaByte Startup", "Startup", "11-50 employees"),
+    ("Westfield Public Library", "School", "11-50 employees"),
+]
+
+
+def _weighted_choice(pool):
+    answers, weights = zip(*pool)
+    return random.choices(answers, weights=weights, k=1)[0]
+
+
+def _load_random_demo() -> None:
+    answers = {qid: _weighted_choice(pool) for qid, pool in _DEMO_ANSWER_POOLS.items()}
+    org_name, org_type, org_size = random.choice(_DEMO_ORG_PROFILES)
+    st.session_state.answers = answers
+    for qid, ans in answers.items():
         st.session_state[f"radio_{qid}"] = ans
-    st.session_state["org_name"] = "Riverside Family Clinic"
-    st.session_state["org_type"] = "Clinic"
-    st.session_state["org_size"] = "11-50 employees"
+    st.session_state["org_name"] = org_name
+    st.session_state["org_type"] = org_type
+    st.session_state["org_size"] = org_size
     st.session_state["_trigger_run"] = True
     st.session_state["_demo_initialized"] = True
 
@@ -214,13 +238,13 @@ st.markdown(
 with st.sidebar:
     # --- Demo mode: URL param or button ---
     if st.query_params.get("demo") == "clinic" and not st.session_state.get("_demo_initialized"):
-        _load_clinic_demo()
+        _load_random_demo()
 
     st.markdown("### Try a Demo")
-    if st.button("🏥 Load Clinic Demo", help="Pre-fills a small clinic with critical security gaps — skip straight to results", use_container_width=True):
-        _load_clinic_demo()
+    if st.button("🎲 Load Random Demo", help="Randomizes org profile and answers — each run shows a unique scenario", use_container_width=True):
+        _load_random_demo()
         st.rerun()
-    st.caption("Skips the questionnaire and shows a realistic high-risk clinic scenario.")
+    st.caption("Generates a unique org scenario each time — skip straight to results.")
     st.markdown("---")
 
     st.header("Organization Profile")
