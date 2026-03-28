@@ -1,6 +1,8 @@
 import csv
 import io
 
+import xlsxwriter
+
 import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
@@ -513,6 +515,125 @@ else:
     with st.expander("Structured JSON Output"):
         st.json(payload)
 
+    # --- Excel report with charts ---
+    xl_buf = io.BytesIO()
+    workbook = xlsxwriter.Workbook(xl_buf, {"in_memory": True})
+
+    # Formats
+    fmt_title = workbook.add_format({"bold": True, "font_size": 14})
+    fmt_header = workbook.add_format({"bold": True, "bg_color": "#D9E1F2", "border": 1})
+    fmt_bold = workbook.add_format({"bold": True})
+    fmt_border = workbook.add_format({"border": 1})
+
+    # Sheet 1: Summary
+    ws_sum = workbook.add_worksheet("Summary")
+    ws_sum.set_column("A:A", 30)
+    ws_sum.set_column("B:B", 20)
+    ws_sum.write("A1", "RiskLens AI — Assessment Report", fmt_title)
+    ws_sum.write("A2", "Organization", fmt_bold)
+    ws_sum.write("B2", org_name_snap)
+    ws_sum.write("A3", "Type", fmt_bold)
+    ws_sum.write("B3", org_type_snap)
+    ws_sum.write("A4", "Size", fmt_bold)
+    ws_sum.write("B4", org_size_snap)
+    ws_sum.write("A5", "Overall Score", fmt_bold)
+    ws_sum.write("B5", results["overall_score"])
+    ws_sum.write("A6", "Risk Level", fmt_bold)
+    ws_sum.write("B6", results["risk_level"])
+
+    ws_sum.write("A8", "Category Scores", fmt_title)
+    ws_sum.write("A9", "Category", fmt_header)
+    ws_sum.write("B9", "Score", fmt_header)
+    for row_i, (cat, score) in enumerate(results["category_scores"].items(), start=9):
+        ws_sum.write(row_i, 0, cat, fmt_border)
+        ws_sum.write(row_i, 1, score, fmt_border)
+
+    # Radar chart for category scores
+    radar = workbook.add_chart({"type": "radar", "subtype": "filled"})
+    n_cats = len(results["category_scores"])
+    radar.add_series({
+        "name": "Score",
+        "categories": ["Summary", 9, 0, 9 + n_cats - 1, 0],
+        "values":     ["Summary", 9, 1, 9 + n_cats - 1, 1],
+        "fill": {"color": "#4472C4", "transparency": 50},
+        "line": {"color": "#4472C4"},
+    })
+    radar.set_title({"name": "Category Scores"})
+    radar.set_y_axis({"min": 0, "max": 100})
+    radar.set_size({"width": 420, "height": 320})
+    ws_sum.insert_chart("D8", radar)
+
+    # Sheet 2: Peer Benchmark
+    ws_bench = workbook.add_worksheet("Peer Benchmark")
+    ws_bench.set_column("A:A", 30)
+    ws_bench.set_column("B:D", 16)
+    ws_bench.write("A1", "Peer Benchmark Comparison", fmt_title)
+    ws_bench.write("A2", f"Sector: {org_type_snap}", fmt_bold)
+    ws_bench.write("A4", "Category", fmt_header)
+    ws_bench.write("B4", "Your Score", fmt_header)
+    ws_bench.write("C4", "Sector Baseline", fmt_header)
+    ws_bench.write("D4", "Delta", fmt_header)
+    for row_i, c in enumerate(comparisons, start=4):
+        ws_bench.write(row_i, 0, c["category"], fmt_border)
+        ws_bench.write(row_i, 1, c["org_score"], fmt_border)
+        ws_bench.write(row_i, 2, c["baseline_score"], fmt_border)
+        ws_bench.write(row_i, 3, c["delta"], fmt_border)
+    # Overall row
+    ov_row = 4 + len(comparisons)
+    ws_bench.write(ov_row, 0, "Overall", fmt_bold)
+    ws_bench.write(ov_row, 1, results["overall_score"], fmt_bold)
+    ws_bench.write(ov_row, 2, baseline["overall"], fmt_bold)
+    ws_bench.write(ov_row, 3, overall_delta, fmt_bold)
+
+    # Grouped bar chart: org vs baseline
+    bar = workbook.add_chart({"type": "bar"})
+    n_bench = len(comparisons)
+    bar.add_series({
+        "name": "Your Score",
+        "categories": ["Peer Benchmark", 4, 0, 4 + n_bench - 1, 0],
+        "values":     ["Peer Benchmark", 4, 1, 4 + n_bench - 1, 1],
+        "fill": {"color": "#4472C4"},
+    })
+    bar.add_series({
+        "name": "Sector Baseline",
+        "categories": ["Peer Benchmark", 4, 0, 4 + n_bench - 1, 0],
+        "values":     ["Peer Benchmark", 4, 2, 4 + n_bench - 1, 2],
+        "fill": {"color": "#A9A9A9"},
+    })
+    bar.set_title({"name": "Your Score vs Sector Baseline"})
+    bar.set_x_axis({"min": 0, "max": 100, "name": "Score"})
+    bar.set_size({"width": 480, "height": 320})
+    ws_bench.insert_chart("F4", bar)
+
+    # Sheet 3: Findings
+    ws_find = workbook.add_worksheet("Findings")
+    ws_find.set_column("A:A", 6)
+    ws_find.set_column("B:B", 22)
+    ws_find.set_column("C:C", 40)
+    ws_find.set_column("D:D", 14)
+    ws_find.set_column("E:H", 20)
+    headers = ["#", "Category", "Question", "Answer", "Priority Score", "Remediation", "Why It Matters", "Framework Map"]
+    for col_i, h in enumerate(headers):
+        ws_find.write(0, col_i, h, fmt_header)
+    for row_i, f in enumerate(results["findings"], start=1):
+        ws_find.write(row_i, 0, row_i, fmt_border)
+        ws_find.write(row_i, 1, f["category"], fmt_border)
+        ws_find.write(row_i, 2, f["question"], fmt_border)
+        ws_find.write(row_i, 3, f["answer"], fmt_border)
+        ws_find.write(row_i, 4, f["roi_score"], fmt_border)
+        ws_find.write(row_i, 5, f["remediation"], fmt_border)
+        ws_find.write(row_i, 6, f["why_it_matters"], fmt_border)
+        ws_find.write(row_i, 7, f["framework_map"], fmt_border)
+
+    # Sheet 4: AI Report
+    ws_ai = workbook.add_worksheet("AI Report")
+    ws_ai.set_column("A:A", 100)
+    ws_ai.write("A1", "AI Recommendation Agent", fmt_title)
+    ws_ai.write("A3", report)
+
+    workbook.close()
+    xl_buf.seek(0)
+
     csv_buf = io.StringIO()
     writer = csv.writer(csv_buf)
     writer.writerow(["RiskLens AI — Assessment Report"])
@@ -532,10 +653,19 @@ else:
     writer.writerow(["AI Recommendation Agent"])
     writer.writerow([report])
 
-    st.download_button(
-        label="Download Report as CSV",
-        data=csv_buf.getvalue(),
-        file_name=f"risklens_report_{org_name_snap.replace(' ', '_')}.csv",
-        mime="text/csv",
-    )
+    dl_col1, dl_col2 = st.columns(2)
+    with dl_col1:
+        st.download_button(
+            label="Download Report as CSV",
+            data=csv_buf.getvalue(),
+            file_name=f"risklens_report_{org_name_snap.replace(' ', '_')}.csv",
+            mime="text/csv",
+        )
+    with dl_col2:
+        st.download_button(
+            label="Download Report as Excel (with charts)",
+            data=xl_buf.getvalue(),
+            file_name=f"risklens_report_{org_name_snap.replace(' ', '_')}.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
 
