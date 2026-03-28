@@ -1,184 +1,270 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 680" width="900" height="680" font-family="'Segoe UI', Arial, sans-serif">
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1100" height="820" viewBox="0 0 1100 820" xmlns="http://www.w3.org/2000/svg" font-family="'Segoe UI', system-ui, sans-serif">
+
   <!-- Background -->
-  <rect width="900" height="680" fill="#f8f9fc" rx="12"/>
+  <rect width="1100" height="820" fill="#0f1117" rx="12"/>
 
-  <!-- Title -->
-  <text x="450" y="38" text-anchor="middle" font-size="20" font-weight="bold" fill="#1a1a2e">RiskLens AI — System Architecture</text>
-  <text x="450" y="58" text-anchor="middle" font-size="12" fill="#666">Streamlit · Pure-Python Engine · Optional LLM · Local Persistence</text>
+  <!-- ═══ TITLE ═══ -->
+  <text x="550" y="36" text-anchor="middle" font-size="20" font-weight="700" fill="#e2e8f0" letter-spacing="1">RiskLens AI — System Architecture</text>
+  <text x="550" y="54" text-anchor="middle" font-size="11" fill="#64748b">HackMISSO 2026 · Cybersecurity Risk Assessment Platform</text>
 
-  <!-- ── Layer 1: User ── -->
-  <rect x="300" y="76" width="300" height="44" rx="8" fill="#e8eaf6" stroke="#5c6bc0" stroke-width="1.5"/>
-  <text x="450" y="102" text-anchor="middle" font-size="13" font-weight="bold" fill="#3949ab">User / Browser</text>
+  <!-- ═══ LEGEND ═══ -->
+  <rect x="30" y="770" width="14" height="14" rx="3" fill="#3b82f6" opacity="0.8"/>
+  <text x="50" y="781" font-size="10" fill="#94a3b8">UI Layer</text>
+  <rect x="120" y="770" width="14" height="14" rx="3" fill="#8b5cf6" opacity="0.8"/>
+  <text x="140" y="781" font-size="10" fill="#94a3b8">Processing Modules</text>
+  <rect x="270" y="770" width="14" height="14" rx="3" fill="#10b981" opacity="0.8"/>
+  <text x="290" y="781" font-size="10" fill="#94a3b8">Data Layer</text>
+  <rect x="380" y="770" width="14" height="14" rx="3" fill="#f59e0b" opacity="0.8"/>
+  <text x="400" y="781" font-size="10" fill="#94a3b8">Storage</text>
+  <rect x="470" y="770" width="14" height="14" rx="3" fill="#ef4444" opacity="0.8"/>
+  <text x="490" y="781" font-size="10" fill="#94a3b8">External API (optional)</text>
 
-  <!-- Arrow user → UI -->
-  <line x1="450" y1="120" x2="450" y2="144" stroke="#5c6bc0" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- ── Layer 2: Streamlit UI ── -->
-  <rect x="60" y="144" width="780" height="100" rx="8" fill="#e3f2fd" stroke="#1976d2" stroke-width="2"/>
-  <text x="450" y="168" text-anchor="middle" font-size="14" font-weight="bold" fill="#0d47a1">Streamlit UI — app.py</text>
-
-  <!-- UI sub-boxes -->
-  <rect x="80"  y="180" width="130" height="48" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
-  <text x="145" y="200" text-anchor="middle" font-size="10" font-weight="bold" fill="#0d47a1">Questionnaire</text>
-  <text x="145" y="215" text-anchor="middle" font-size="9" fill="#333">Org type · 4-pt scale</text>
-  <text x="145" y="227" text-anchor="middle" font-size="9" fill="#333">answer collection</text>
-
-  <rect x="225" y="180" width="130" height="48" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
-  <text x="290" y="200" text-anchor="middle" font-size="10" font-weight="bold" fill="#0d47a1">Risk Dashboard</text>
-  <text x="290" y="215" text-anchor="middle" font-size="9" fill="#333">Score · radar chart</text>
-  <text x="290" y="227" text-anchor="middle" font-size="9" fill="#333">trend · peer table</text>
-
-  <rect x="370" y="180" width="130" height="48" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
-  <text x="435" y="200" text-anchor="middle" font-size="10" font-weight="bold" fill="#0d47a1">What-If Simulator</text>
-  <text x="435" y="215" text-anchor="middle" font-size="9" fill="#333">Fix preview · bundle</text>
-  <text x="435" y="227" text-anchor="middle" font-size="9" fill="#333">score delta view</text>
-
-  <rect x="515" y="180" width="130" height="48" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
-  <text x="580" y="200" text-anchor="middle" font-size="10" font-weight="bold" fill="#0d47a1">Action Plan</text>
-  <text x="580" y="215" text-anchor="middle" font-size="9" fill="#333">Top actions · quick</text>
-  <text x="580" y="227" text-anchor="middle" font-size="9" fill="#333">wins · AI report</text>
-
-  <rect x="660" y="180" width="160" height="48" rx="6" fill="#bbdefb" stroke="#1976d2" stroke-width="1"/>
-  <text x="740" y="200" text-anchor="middle" font-size="10" font-weight="bold" fill="#0d47a1">Export / History</text>
-  <text x="740" y="215" text-anchor="middle" font-size="9" fill="#333">CSV download</text>
-  <text x="740" y="227" text-anchor="middle" font-size="9" fill="#333">change narrative</text>
-
-  <!-- ── Arrows UI → Core modules ── -->
-  <!-- to scoring -->
-  <line x1="200" y1="244" x2="200" y2="300" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- to simulator -->
-  <line x1="370" y1="244" x2="330" y2="300" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- to report -->
-  <line x1="540" y1="244" x2="540" y2="300" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- to benchmarks -->
-  <line x1="700" y1="244" x2="700" y2="300" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
-  <!-- to history -->
-  <line x1="780" y1="244" x2="820" y2="300" stroke="#1976d2" stroke-width="1.5" marker-end="url(#arrow)"/>
-
-  <!-- ── Layer 3: Core modules ── -->
-
-  <!-- scoring.py -->
-  <rect x="60" y="300" width="200" height="140" rx="8" fill="#e8f5e9" stroke="#388e3c" stroke-width="2"/>
-  <text x="160" y="322" text-anchor="middle" font-size="13" font-weight="bold" fill="#1b5e20">scoring.py</text>
-  <text x="160" y="338" text-anchor="middle" font-size="10" fill="#2e7d32">Risk Calculation Engine</text>
-  <line x1="80" y1="344" x2="240" y2="344" stroke="#388e3c" stroke-width="0.8"/>
-  <text x="160" y="360" text-anchor="middle" font-size="9" fill="#333">• Org-type weight overrides</text>
-  <text x="160" y="374" text-anchor="middle" font-size="9" fill="#333">• Per-category scoring</text>
-  <text x="160" y="388" text-anchor="middle" font-size="9" fill="#333">• ROI = risk×time / effort</text>
-  <text x="160" y="402" text-anchor="middle" font-size="9" fill="#333">• Dependency blocking</text>
-  <text x="160" y="416" text-anchor="middle" font-size="9" fill="#333">• Threat tag aggregation</text>
-  <text x="160" y="430" text-anchor="middle" font-size="9" fill="#555">→ score, findings, top_actions</text>
-
-  <!-- simulator.py -->
-  <rect x="278" y="300" width="200" height="140" rx="8" fill="#fff8e1" stroke="#f9a825" stroke-width="2"/>
-  <text x="378" y="322" text-anchor="middle" font-size="13" font-weight="bold" fill="#e65100">simulator.py</text>
-  <text x="378" y="338" text-anchor="middle" font-size="10" fill="#bf360c">What-If Simulator</text>
-  <line x1="298" y1="344" x2="458" y2="344" stroke="#f9a825" stroke-width="0.8"/>
-  <text x="378" y="360" text-anchor="middle" font-size="9" fill="#333">• simulate_fix(answers, id)</text>
-  <text x="378" y="374" text-anchor="middle" font-size="9" fill="#333">• simulate_top_fixes(N)</text>
-  <text x="378" y="388" text-anchor="middle" font-size="9" fill="#333">• simulate_bundle(ids)</text>
-  <text x="378" y="402" text-anchor="middle" font-size="9" fill="#333">• Re-scores after each fix</text>
-  <text x="378" y="416" text-anchor="middle" font-size="9" fill="#333">• Threats eliminated</text>
-  <text x="378" y="430" text-anchor="middle" font-size="9" fill="#555">→ delta, level change</text>
-
-  <!-- report.py -->
-  <rect x="496" y="300" width="200" height="140" rx="8" fill="#fce4ec" stroke="#c2185b" stroke-width="2"/>
-  <text x="596" y="322" text-anchor="middle" font-size="13" font-weight="bold" fill="#880e4f">report.py</text>
-  <text x="596" y="338" text-anchor="middle" font-size="10" fill="#ad1457">AI Report Generator</text>
-  <line x1="516" y1="344" x2="676" y2="344" stroke="#c2185b" stroke-width="0.8"/>
-  <text x="596" y="360" text-anchor="middle" font-size="9" fill="#333">• build_llm_payload(results)</text>
-  <text x="596" y="374" text-anchor="middle" font-size="9" fill="#333">• generate_ai_report()</text>
-  <text x="596" y="388" text-anchor="middle" font-size="9" fill="#333">• gpt-4o-mini (if API key)</text>
-  <text x="596" y="402" text-anchor="middle" font-size="9" fill="#333">• demo_report() fallback</text>
-  <text x="596" y="416" text-anchor="middle" font-size="9" fill="#333">• 30-day action plan</text>
-  <text x="596" y="430" text-anchor="middle" font-size="9" fill="#555">→ 6-section narrative</text>
-
-  <!-- benchmarks.py -->
-  <rect x="714" y="300" width="126" height="140" rx="8" fill="#ede7f6" stroke="#7b1fa2" stroke-width="2"/>
-  <text x="777" y="320" text-anchor="middle" font-size="11" font-weight="bold" fill="#4a148c">benchmarks.py</text>
-  <text x="777" y="334" text-anchor="middle" font-size="9" fill="#6a1b9a">Peer Comparison</text>
-  <line x1="730" y1="340" x2="824" y2="340" stroke="#7b1fa2" stroke-width="0.8"/>
-  <text x="777" y="356" text-anchor="middle" font-size="9" fill="#333">• Sector baselines</text>
-  <text x="777" y="370" text-anchor="middle" font-size="9" fill="#333">• get_baseline(org)</text>
-  <text x="777" y="384" text-anchor="middle" font-size="9" fill="#333">• peer_comparison()</text>
-  <text x="777" y="398" text-anchor="middle" font-size="9" fill="#333">• ±3 threshold</text>
-  <text x="777" y="412" text-anchor="middle" font-size="9" fill="#333">• 5 sector types</text>
-  <text x="777" y="430" text-anchor="middle" font-size="9" fill="#555">→ deltas, status</text>
-
-  <!-- ── Arrows core → data ── -->
-  <line x1="160" y1="440" x2="290" y2="494" stroke="#388e3c" stroke-width="1.5" marker-end="url(#arrow2)"/>
-  <line x1="378" y1="440" x2="378" y2="494" stroke="#f9a825" stroke-width="1.5" marker-end="url(#arrow2)"/>
-  <line x1="596" y1="440" x2="460" y2="494" stroke="#c2185b" stroke-width="1.5" marker-end="url(#arrow2)"/>
-
-  <!-- ── Layer 4: Data layer ── -->
-
-  <!-- data.py -->
-  <rect x="220" y="494" width="320" height="80" rx="8" fill="#efebe9" stroke="#5d4037" stroke-width="2"/>
-  <text x="380" y="516" text-anchor="middle" font-size="13" font-weight="bold" fill="#3e2723">data.py — Question Registry</text>
-  <text x="380" y="532" text-anchor="middle" font-size="9" fill="#555">Question dataclass · answer/urgency factors · category order</text>
-  <text x="380" y="546" text-anchor="middle" font-size="9" fill="#555">ORG_TYPE_WEIGHT_OVERRIDES · org_relevance boosts</text>
-  <text x="380" y="560" text-anchor="middle" font-size="9" fill="#555">loads from questions.json at startup</text>
-
-  <!-- history.py -->
-  <rect x="570" y="494" width="170" height="80" rx="8" fill="#e0f7fa" stroke="#00838f" stroke-width="2"/>
-  <text x="655" y="516" text-anchor="middle" font-size="12" font-weight="bold" fill="#004d40">history.py</text>
-  <text x="655" y="532" text-anchor="middle" font-size="9" fill="#555">save_assessment()</text>
-  <text x="655" y="546" text-anchor="middle" font-size="9" fill="#555">get_last_assessment()</text>
-  <text x="655" y="560" text-anchor="middle" font-size="9" fill="#555">get_all_assessments()</text>
-
-  <!-- Arrow data.py → questions.json -->
-  <line x1="300" y1="574" x2="200" y2="610" stroke="#5d4037" stroke-width="1.5" marker-end="url(#arrow3)"/>
-  <!-- Arrow history.py → assessment_history.json -->
-  <line x1="655" y1="574" x2="730" y2="610" stroke="#00838f" stroke-width="1.5" marker-end="url(#arrow3)"/>
-  <!-- Arrow history.py ← UI -->
-  <line x1="820" y1="300" x2="720" y2="574" stroke="#1976d2" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrow)"/>
-
-  <!-- ── Layer 5: Storage ── -->
-  <rect x="60" y="610" width="270" height="52" rx="8" fill="#fafafa" stroke="#9e9e9e" stroke-width="1.5"/>
-  <text x="195" y="632" text-anchor="middle" font-size="12" font-weight="bold" fill="#424242">questions.json</text>
-  <text x="195" y="652" text-anchor="middle" font-size="9" fill="#666">Question bank · weights · remediation · framework_map</text>
-
-  <rect x="590" y="610" width="250" height="52" rx="8" fill="#fafafa" stroke="#9e9e9e" stroke-width="1.5"/>
-  <text x="715" y="632" text-anchor="middle" font-size="12" font-weight="bold" fill="#424242">assessment_history.json</text>
-  <text x="715" y="652" text-anchor="middle" font-size="9" fill="#666">Time-series scores · categories · threats · quick wins</text>
-
-  <!-- ── External: OpenAI ── -->
-  <rect x="714" y="200" width="168" height="44" rx="8" fill="#fff3e0" stroke="#e65100" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <text x="798" y="220" text-anchor="middle" font-size="11" font-weight="bold" fill="#bf360c">OpenAI API</text>
-  <text x="798" y="234" text-anchor="middle" font-size="9" fill="#888">gpt-4o-mini (optional)</text>
-
-  <!-- Arrow report.py → OpenAI (bi-directional lines) -->
-  <line x1="696" y1="380" x2="798" y2="344" stroke="#e65100" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowOrange)"/>
-  <line x1="798" y1="300" x2="696" y2="380" stroke="#e65100" stroke-width="1.2" stroke-dasharray="4,3" marker-end="url(#arrowOrange)"/>
-
-  <!-- Legend -->
-  <rect x="60" y="610" width="0" height="0"/>
-  <g transform="translate(60, 670)">
-    <rect width="14" height="10" rx="2" fill="#e3f2fd" stroke="#1976d2" stroke-width="1"/>
-    <text x="18" y="9" font-size="9" fill="#444">UI Layer</text>
-    <rect x="90" width="14" height="10" rx="2" fill="#e8f5e9" stroke="#388e3c" stroke-width="1"/>
-    <text x="108" y="9" font-size="9" fill="#444">Core Engine</text>
-    <rect x="200" width="14" height="10" rx="2" fill="#efebe9" stroke="#5d4037" stroke-width="1"/>
-    <text x="218" y="9" font-size="9" fill="#444">Data / Config</text>
-    <rect x="310" width="14" height="10" rx="2" fill="#fafafa" stroke="#9e9e9e" stroke-width="1"/>
-    <text x="328" y="9" font-size="9" fill="#444">Persistence</text>
-    <line x1="410" y1="5" x2="440" y2="5" stroke="#e65100" stroke-width="1.2" stroke-dasharray="4,3"/>
-    <text x="446" y="9" font-size="9" fill="#444">Optional / External</text>
-  </g>
-
-  <!-- Arrowhead markers -->
+  <!-- Arrow markers -->
   <defs>
-    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#1976d2"/>
-    </marker>
-    <marker id="arrow2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#555"/>
-    </marker>
-    <marker id="arrow3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#777"/>
-    </marker>
-    <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
-      <path d="M0,0 L0,6 L8,3 z" fill="#e65100"/>
-    </marker>
+    <marker id="arr-blue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#3b82f6"/></marker>
+    <marker id="arr-gray" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#475569"/></marker>
+    <marker id="arr-green" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#10b981"/></marker>
+    <marker id="arr-amber" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#f59e0b"/></marker>
+    <marker id="arr-red" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#ef4444"/></marker>
+    <marker id="arr-purple" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#8b5cf6"/></marker>
   </defs>
+
+  <!-- ═══ CATEGORY BADGES (top strip) ═══ -->
+  <rect x="70"  y="66" width="126" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="133" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Access Control · 5 Qs</text>
+  <rect x="206" y="66" width="148" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="280" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Endpoint Security · 2 Qs</text>
+  <rect x="364" y="66" width="148" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="438" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Patch Management · 2 Qs</text>
+  <rect x="522" y="66" width="140" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="592" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Data Protection · 3 Qs</text>
+  <rect x="672" y="66" width="152" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="748" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Backup &amp; Recovery · 2 Qs</text>
+  <rect x="834" y="66" width="156" height="18" rx="4" fill="#1e1b4b"/>
+  <text x="912" y="79" text-anchor="middle" font-size="9" fill="#a5b4fc">Incident Response · 4 Qs</text>
+
+  <!-- ═══ ROW 0 — USER ═══ -->
+  <ellipse cx="550" cy="116" rx="72" ry="26" fill="#1e293b" stroke="#3b82f6" stroke-width="2"/>
+  <text x="550" y="112" text-anchor="middle" font-size="13" font-weight="600" fill="#93c5fd">User / Browser</text>
+  <text x="550" y="128" text-anchor="middle" font-size="9.5" fill="#64748b">Questionnaire inputs · Dashboard review</text>
+
+  <!-- Arrow: User → UI -->
+  <line x1="550" y1="142" x2="550" y2="164" stroke="#3b82f6" stroke-width="1.5" marker-end="url(#arr-blue)"/>
+
+  <!-- ═══ ROW 1 — STREAMLIT UI ═══ -->
+  <rect x="65" y="164" width="970" height="182" rx="10" fill="#0f2044" stroke="#3b82f6" stroke-width="1.5" opacity="0.95"/>
+  <text x="550" y="183" text-anchor="middle" font-size="13" font-weight="700" fill="#60a5fa">Streamlit UI — app.py</text>
+  <text x="550" y="197" text-anchor="middle" font-size="10" fill="#334155">Main Orchestration · Session State Management · Component Rendering</text>
+
+  <!-- Panel: Questionnaire -->
+  <rect x="82"  y="207" width="175" height="126" rx="7" fill="#0d1b3e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="169" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#93c5fd">Questionnaire</text>
+  <text x="169" y="239" text-anchor="middle" font-size="9" fill="#94a3b8">Org name / type / size (sidebar)</text>
+  <text x="169" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">18 questions across 6 categories</text>
+  <text x="169" y="265" text-anchor="middle" font-size="9" fill="#94a3b8">4-pt scale: Yes / Partly / No / ?</text>
+  <text x="169" y="278" text-anchor="middle" font-size="9" fill="#94a3b8">Defaults to "Don't Know"</text>
+  <text x="169" y="291" text-anchor="middle" font-size="9" fill="#94a3b8">Grouped by security domain</text>
+  <text x="169" y="325" text-anchor="middle" font-size="8.5" fill="#334155" font-style="italic">session_state.answers</text>
+
+  <!-- Panel: Risk Dashboard -->
+  <rect x="267" y="207" width="175" height="126" rx="7" fill="#0d1b3e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="354" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#93c5fd">Risk Dashboard</text>
+  <text x="354" y="239" text-anchor="middle" font-size="9" fill="#94a3b8">Overall score + risk band</text>
+  <text x="354" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">Category radar (Plotly)</text>
+  <text x="354" y="265" text-anchor="middle" font-size="9" fill="#94a3b8">Score trend line chart</text>
+  <text x="354" y="278" text-anchor="middle" font-size="9" fill="#94a3b8">Controls traffic light grid</text>
+  <text x="354" y="291" text-anchor="middle" font-size="9" fill="#94a3b8">Peer comparison vs sector</text>
+  <text x="354" y="325" text-anchor="middle" font-size="8.5" fill="#334155" font-style="italic">session_state._results</text>
+
+  <!-- Panel: What-If Simulator -->
+  <rect x="452" y="207" width="175" height="126" rx="7" fill="#0d1b3e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="539" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#93c5fd">What-If Simulator</text>
+  <text x="539" y="239" text-anchor="middle" font-size="9" fill="#94a3b8">Single fix score preview</text>
+  <text x="539" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">Bundle scenario builder</text>
+  <text x="539" y="265" text-anchor="middle" font-size="9" fill="#94a3b8">Score delta + effort display</text>
+  <text x="539" y="278" text-anchor="middle" font-size="9" fill="#94a3b8">Threats eliminated per fix</text>
+  <text x="539" y="291" text-anchor="middle" font-size="9" fill="#94a3b8">Top 5 fixes pre-ranked by ROI</text>
+  <text x="539" y="325" text-anchor="middle" font-size="8.5" fill="#334155" font-style="italic">session_state._top_sims</text>
+
+  <!-- Panel: Action Plan -->
+  <rect x="637" y="207" width="175" height="126" rx="7" fill="#0d1b3e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="724" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#93c5fd">Action Plan</text>
+  <text x="724" y="239" text-anchor="middle" font-size="9" fill="#94a3b8">Top 3 ROI-ranked controls</text>
+  <text x="724" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">Quick wins vs strategic fixes</text>
+  <text x="724" y="265" text-anchor="middle" font-size="9" fill="#94a3b8">AI recommendation report</text>
+  <text x="724" y="278" text-anchor="middle" font-size="9" fill="#94a3b8">6-section markdown output</text>
+  <text x="724" y="291" text-anchor="middle" font-size="9" fill="#94a3b8">Structured JSON payload view</text>
+  <text x="724" y="325" text-anchor="middle" font-size="8.5" fill="#334155" font-style="italic">session_state._report</text>
+
+  <!-- Panel: Export & History -->
+  <rect x="822" y="207" width="200" height="126" rx="7" fill="#0d1b3e" stroke="#3b82f6" stroke-width="1"/>
+  <text x="922" y="224" text-anchor="middle" font-size="11" font-weight="700" fill="#93c5fd">Export &amp; History</text>
+  <text x="922" y="239" text-anchor="middle" font-size="9" fill="#94a3b8">CSV export (full assessment)</text>
+  <text x="922" y="252" text-anchor="middle" font-size="9" fill="#94a3b8">Historical score trend chart</text>
+  <text x="922" y="265" text-anchor="middle" font-size="9" fill="#94a3b8">Narrative change comparison</text>
+  <text x="922" y="278" text-anchor="middle" font-size="9" fill="#94a3b8">"Top issue shifted: X → Y"</text>
+  <text x="922" y="291" text-anchor="middle" font-size="9" fill="#94a3b8">Delta vs last assessment</text>
+  <text x="922" y="325" text-anchor="middle" font-size="8.5" fill="#334155" font-style="italic">session_state._prior</text>
+
+  <!-- ═══ ARROWS: UI → Processing modules ═══ -->
+  <line x1="175" y1="346" x2="175" y2="382" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+  <line x1="354" y1="346" x2="354" y2="382" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+  <line x1="539" y1="346" x2="539" y2="382" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+  <line x1="724" y1="346" x2="724" y2="382" stroke="#8b5cf6" stroke-width="1.5" marker-end="url(#arr-purple)"/>
+  <!-- Export/History arrow dashed (async) -->
+  <line x1="922" y1="346" x2="922" y2="565" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="5,3" marker-end="url(#arr-amber)"/>
+
+  <!-- ═══ ROW 2 — PROCESSING MODULES ═══ -->
+
+  <!-- SCORING.PY -->
+  <rect x="65" y="382" width="215" height="160" rx="8" fill="#1a0d35" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="172" y="400" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">scoring.py</text>
+  <text x="172" y="413" text-anchor="middle" font-size="9.5" fill="#7c3aed" font-weight="600">Risk Calculation Engine</text>
+  <line x1="82" y1="419" x2="262" y2="419" stroke="#2d1b5e" stroke-width="1"/>
+  <text x="172" y="433" text-anchor="middle" font-size="9" fill="#94a3b8">effective_weight = base + org_override</text>
+  <text x="172" y="446" text-anchor="middle" font-size="9" fill="#94a3b8">contribution = weight × answer_factor</text>
+  <text x="172" y="459" text-anchor="middle" font-size="9" fill="#94a3b8">score = 100 × (1 − Σrisk / Σmax)</text>
+  <text x="172" y="472" text-anchor="middle" font-size="9" fill="#94a3b8">ROI = (risk × time_to_value) / effort</text>
+  <text x="172" y="485" text-anchor="middle" font-size="9" fill="#94a3b8">Dependency blocking analysis</text>
+  <text x="172" y="498" text-anchor="middle" font-size="9" fill="#94a3b8">Threat tag aggregation</text>
+  <text x="172" y="511" text-anchor="middle" font-size="9" fill="#94a3b8">Category scores (6 domains)</text>
+  <text x="172" y="533" text-anchor="middle" font-size="8.5" fill="#6d28d9" font-style="italic">calculate_results(answers, org_type)</text>
+
+  <!-- SIMULATOR.PY -->
+  <rect x="295" y="382" width="215" height="160" rx="8" fill="#1a0d35" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="402" y="400" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">simulator.py</text>
+  <text x="402" y="413" text-anchor="middle" font-size="9.5" fill="#7c3aed" font-weight="600">What-If Scenario Engine</text>
+  <line x1="312" y1="419" x2="492" y2="419" stroke="#2d1b5e" stroke-width="1"/>
+  <text x="402" y="433" text-anchor="middle" font-size="9" fill="#94a3b8">simulate_fix(answers, q_id)</text>
+  <text x="402" y="446" text-anchor="middle" font-size="9" fill="#94a3b8">simulate_top_fixes(answers, limit=5)</text>
+  <text x="402" y="459" text-anchor="middle" font-size="9" fill="#94a3b8">simulate_bundle(answers, q_ids)</text>
+  <text x="402" y="472" text-anchor="middle" font-size="9" fill="#94a3b8">Patches answers → re-scores</text>
+  <text x="402" y="485" text-anchor="middle" font-size="9" fill="#94a3b8">Ranks by score_delta + ROI</text>
+  <text x="402" y="498" text-anchor="middle" font-size="9" fill="#94a3b8">Returns threats_reduced + deltas</text>
+  <text x="402" y="511" text-anchor="middle" font-size="9" fill="#94a3b8">Category improvement per fix</text>
+  <text x="402" y="533" text-anchor="middle" font-size="8.5" fill="#6d28d9" font-style="italic">calls calculate_results() internally</text>
+
+  <!-- REPORT.PY -->
+  <rect x="525" y="382" width="215" height="160" rx="8" fill="#1a0d35" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="632" y="400" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">report.py</text>
+  <text x="632" y="413" text-anchor="middle" font-size="9.5" fill="#7c3aed" font-weight="600">Report Generator</text>
+  <line x1="542" y1="419" x2="722" y2="419" stroke="#2d1b5e" stroke-width="1"/>
+  <text x="632" y="433" text-anchor="middle" font-size="9" fill="#94a3b8">build_llm_payload(org, results)</text>
+  <text x="632" y="446" text-anchor="middle" font-size="9" fill="#94a3b8">generate_ai_report() → OpenAI</text>
+  <text x="632" y="459" text-anchor="middle" font-size="9" fill="#94a3b8">generate_demo_report() ← fallback</text>
+  <text x="632" y="472" text-anchor="middle" font-size="9" fill="#94a3b8">6-section output:</text>
+  <text x="632" y="485" text-anchor="middle" font-size="9" fill="#94a3b8">Risk · Quick Win · 30-Day Plan</text>
+  <text x="632" y="498" text-anchor="middle" font-size="9" fill="#94a3b8">Impact · Context · Confidence</text>
+  <text x="632" y="511" text-anchor="middle" font-size="9" fill="#94a3b8">Size-calibrated output depth</text>
+  <text x="632" y="533" text-anchor="middle" font-size="8.5" fill="#6d28d9" font-style="italic">gpt-4o-mini · temp=0.2</text>
+
+  <!-- BENCHMARKS.PY -->
+  <rect x="755" y="382" width="215" height="160" rx="8" fill="#1a0d35" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text x="862" y="400" text-anchor="middle" font-size="12" font-weight="700" fill="#c4b5fd">benchmarks.py</text>
+  <text x="862" y="413" text-anchor="middle" font-size="9.5" fill="#7c3aed" font-weight="600">Peer Comparison</text>
+  <line x1="772" y1="419" x2="952" y2="419" stroke="#2d1b5e" stroke-width="1"/>
+  <text x="862" y="433" text-anchor="middle" font-size="9" fill="#94a3b8">get_baseline(org_type)</text>
+  <text x="862" y="446" text-anchor="middle" font-size="9" fill="#94a3b8">peer_comparison(org_type, scores)</text>
+  <text x="862" y="459" text-anchor="middle" font-size="9" fill="#94a3b8">Baselines: Clinic · School</text>
+  <text x="862" y="472" text-anchor="middle" font-size="9" fill="#94a3b8">Nonprofit · Startup · Small Biz</text>
+  <text x="862" y="485" text-anchor="middle" font-size="9" fill="#94a3b8">Status: above / on-par / below</text>
+  <text x="862" y="498" text-anchor="middle" font-size="9" fill="#94a3b8">±3 point tolerance bands</text>
+  <text x="862" y="511" text-anchor="middle" font-size="9" fill="#94a3b8">Per-category comparison flags</text>
+  <text x="862" y="533" text-anchor="middle" font-size="8.5" fill="#6d28d9" font-style="italic">no external deps · self-contained</text>
+
+  <!-- ═══ OPENAI API (right side) ═══ -->
+  <!-- Arrow: report.py → OpenAI -->
+  <line x1="740" y1="455" x2="1010" y2="455" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="6,3" marker-end="url(#arr-red)"/>
+  <text x="875" y="447" text-anchor="middle" font-size="8.5" fill="#ef4444">if OPENAI_API_KEY present</text>
+
+  <rect x="1010" y="422" width="82" height="90" rx="8" fill="#1a0505" stroke="#ef4444" stroke-width="1.5"/>
+  <text x="1051" y="443" text-anchor="middle" font-size="11" font-weight="700" fill="#fca5a5">OpenAI</text>
+  <text x="1051" y="457" text-anchor="middle" font-size="9.5" fill="#f87171">API</text>
+  <line x1="1015" y1="463" x2="1087" y2="463" stroke="#450a0a" stroke-width="1"/>
+  <text x="1051" y="477" text-anchor="middle" font-size="8.5" fill="#94a3b8">gpt-4o-mini</text>
+  <text x="1051" y="490" text-anchor="middle" font-size="8.5" fill="#94a3b8">temp = 0.2</text>
+  <text x="1051" y="503" text-anchor="middle" font-size="8.5" fill="#94a3b8">~8KB payload</text>
+
+  <!-- Arrow back: OpenAI → report.py -->
+  <path d="M 1010 500 Q 875 526 740 510" stroke="#ef4444" stroke-width="1" stroke-dasharray="4,3" fill="none" marker-end="url(#arr-red)"/>
+  <text x="875" y="530" text-anchor="middle" font-size="8" fill="#ef4444">markdown (6 sections)</text>
+
+  <!-- ═══ ARROWS: Processing → Data Layer ═══ -->
+  <line x1="172" y1="542" x2="270" y2="578" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <line x1="402" y1="542" x2="380" y2="578" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <line x1="632" y1="542" x2="490" y2="578" stroke="#10b981" stroke-width="1.5" marker-end="url(#arr-green)"/>
+  <text x="310" y="566" text-anchor="middle" font-size="8.5" fill="#10b981">QUESTIONS · ANSWER_FACTORS · ORG_TYPE_WEIGHT_OVERRIDES</text>
+
+  <!-- ═══ ROW 3 — DATA LAYER ═══ -->
+  <rect x="65" y="578" width="875" height="110" rx="8" fill="#0d2a1f" stroke="#10b981" stroke-width="1.5"/>
+  <text x="502" y="596" text-anchor="middle" font-size="12" font-weight="700" fill="#6ee7b7">data.py — Question Registry &amp; Data Layer</text>
+  <line x1="82" y1="603" x2="922" y2="603" stroke="#065f46" stroke-width="1"/>
+
+  <!-- data.py col 1 -->
+  <text x="100" y="619" font-size="9" fill="#94a3b8" font-weight="600">Question dataclass</text>
+  <text x="100" y="632" font-size="9" fill="#94a3b8">  id · text · category · weight</text>
+  <text x="100" y="645" font-size="9" fill="#94a3b8">  impact · effort · time_to_value</text>
+  <text x="100" y="658" font-size="9" fill="#94a3b8">  threats · frameworks · depends_on</text>
+  <text x="100" y="671" font-size="9" fill="#94a3b8">  quick_win · org_relevance flags</text>
+  <text x="100" y="681" font-size="8.5" fill="#059669" font-style="italic">QUESTIONS: List[Question] (18 items)</text>
+
+  <!-- data.py col 2 -->
+  <text x="330" y="619" font-size="9" fill="#94a3b8" font-weight="600">Answer &amp; Urgency Factors</text>
+  <text x="330" y="632" font-size="9" fill="#94a3b8">ANSWER_FACTORS</text>
+  <text x="330" y="645" font-size="9" fill="#94a3b8">  Yes→0.0 · Partially→0.5</text>
+  <text x="330" y="658" font-size="9" fill="#94a3b8">  No→1.0 · Don't Know→1.0</text>
+  <text x="330" y="671" font-size="9" fill="#94a3b8">URGENCY_FACTORS</text>
+  <text x="330" y="681" font-size="8.5" fill="#059669" font-style="italic">  Yes→0.0 · Partly→0.7 · No→1.0 · ?→0.9</text>
+
+  <!-- data.py col 3 -->
+  <text x="560" y="619" font-size="9" fill="#94a3b8" font-weight="600">Org-Type Weight Overrides</text>
+  <text x="560" y="632" font-size="9" fill="#94a3b8">Clinic: data protection weight +</text>
+  <text x="560" y="645" font-size="9" fill="#94a3b8">School: phishing awareness weight +</text>
+  <text x="560" y="658" font-size="9" fill="#94a3b8">Nonprofit: low-effort controls weight +</text>
+  <text x="560" y="671" font-size="9" fill="#94a3b8">Startup: patch speed weight +</text>
+  <text x="560" y="681" font-size="8.5" fill="#059669" font-style="italic">Applied at runtime in calculate_results()</text>
+
+  <!-- data.py col 4 -->
+  <text x="790" y="619" font-size="9" fill="#94a3b8" font-weight="600">Category &amp; Domain Order</text>
+  <text x="790" y="632" font-size="9" fill="#94a3b8">CATEGORY_ORDER (6 domains)</text>
+  <text x="790" y="645" font-size="9" fill="#94a3b8">Access Control</text>
+  <text x="790" y="658" font-size="9" fill="#94a3b8">Endpoint · Patching · Data</text>
+  <text x="790" y="671" font-size="9" fill="#94a3b8">Backup · Incident Response</text>
+  <text x="790" y="681" font-size="8.5" fill="#059669" font-style="italic">Display ordering for radar chart</text>
+
+  <!-- ═══ ARROWS: data.py → questions.json ═══ -->
+  <line x1="300" y1="688" x2="300" y2="718" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+  <text x="380" y="706" font-size="8.5" fill="#f59e0b">loaded once at startup</text>
+
+  <!-- ═══ ROW 4 — STORAGE ═══ -->
+
+  <!-- questions.json -->
+  <rect x="65" y="718" width="875" height="36" rx="6" fill="#1c1005" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="502" y="734" text-anchor="middle" font-size="11" font-weight="700" fill="#fbbf24">questions.json  (read-only source of truth)</text>
+  <text x="502" y="748" text-anchor="middle" font-size="9" fill="#94a3b8">18 questions · 6 categories · weights · threats · framework mappings (NIST CSF · CIS Controls · ISO 27001) · remediation steps · org_relevance flags</text>
+
+  <!-- history.py box -->
+  <rect x="65" y="565" width="0" height="0" rx="0" fill="none"/>
+  <!-- History column (separate on right) already handled by Export & History panel + arrow to history.py -->
+
+  <!-- HISTORY.PY (standalone, right column) -->
+  <rect x="958" y="565" width="132" height="100" rx="8" fill="#1c1005" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1024" y="582" text-anchor="middle" font-size="10.5" font-weight="700" fill="#fbbf24">history.py</text>
+  <text x="1024" y="595" text-anchor="middle" font-size="8.5" fill="#b45309" font-weight="600">Persistence Layer</text>
+  <line x1="965" y1="601" x2="1083" y2="601" stroke="#78350f" stroke-width="1"/>
+  <text x="1024" y="613" text-anchor="middle" font-size="8.5" fill="#94a3b8">save_assessment()</text>
+  <text x="1024" y="625" text-anchor="middle" font-size="8.5" fill="#94a3b8">get_last_assessment()</text>
+  <text x="1024" y="637" text-anchor="middle" font-size="8.5" fill="#94a3b8">get_all_assessments()</text>
+  <text x="1024" y="649" text-anchor="middle" font-size="8.5" fill="#94a3b8">_load() / _save()</text>
+  <text x="1024" y="658" text-anchor="middle" font-size="7.5" fill="#78350f" font-style="italic">Appends per org_name key</text>
+
+  <!-- Arrow: history.py → assessment_history.json -->
+  <line x1="1024" y1="665" x2="1024" y2="718" stroke="#f59e0b" stroke-width="1.5" marker-end="url(#arr-amber)"/>
+
+  <!-- assessment_history.json -->
+  <rect x="958" y="718" width="132" height="36" rx="6" fill="#1c1005" stroke="#f59e0b" stroke-width="1.5"/>
+  <text x="1024" y="733" text-anchor="middle" font-size="9.5" font-weight="700" fill="#fbbf24">assessment_history</text>
+  <text x="1024" y="746" text-anchor="middle" font-size="8" fill="#94a3b8">.json (append-only)</text>
+
 </svg>
