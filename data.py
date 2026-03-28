@@ -1,7 +1,7 @@
 import json
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 _DATA = json.loads((Path(__file__).parent / "questions.json").read_text())
 
@@ -16,6 +16,15 @@ class Question:
     remediation: str
     why_it_matters: str
     framework_map: str
+    effort: str = "Medium"
+    time_to_value: str = "Weeks"
+    depends_on: List[str] = field(default_factory=list)
+    threats: List[str] = field(default_factory=list)
+    business_impact: str = ""
+    quick_win: bool = False
+    simulation_gain_hint: int = 0
+    follow_up_if_no: List[str] = field(default_factory=list)
+    org_relevance: Optional[Dict[str, int]] = None
 
 
 QUESTIONS: List[Question] = [Question(**q) for q in _DATA["questions"]]

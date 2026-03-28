@@ -74,6 +74,357 @@
         "Backup & Recovery": 76,
         "Incident Response": 88
       }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 72,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 80,
+        "Endpoint Security": 100,
+        "Data Protection": 68,
+        "Patch Management": 100,
+        "Backup & Recovery": 26,
+        "Incident Response": 64
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 0,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 0,
+        "Endpoint Security": 0,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 0,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 0,
+        "Endpoint Security": 0,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      }
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 74,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 52,
+        "Endpoint Security": 73,
+        "Data Protection": 70,
+        "Patch Management": 100,
+        "Backup & Recovery": 100,
+        "Incident Response": 76
+      },
+      "top_action_ids": [
+        "q3",
+        "q2",
+        "q13",
+        "q4",
+        "q14"
+      ],
+      "top_action_categories": [
+        "Access Control",
+        "Access Control",
+        "Incident Response",
+        "Endpoint Security",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "credential theft",
+        "insider threat",
+        "phishing"
+      ],
+      "best_quick_win_id": "q3",
+      "best_quick_win_label": "Access Control"
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 79,
+      "risk_level": "Moderate",
+      "category_scores": {
+        "Access Control": 52,
+        "Endpoint Security": 73,
+        "Data Protection": 70,
+        "Patch Management": 100,
+        "Backup & Recovery": 100,
+        "Incident Response": 100
+      },
+      "top_action_ids": [
+        "q3",
+        "q2",
+        "q4",
+        "q17",
+        "q15"
+      ],
+      "top_action_categories": [
+        "Access Control",
+        "Access Control",
+        "Endpoint Security",
+        "Data Protection",
+        "Access Control"
+      ],
+      "dominant_threats": [
+        "insider threat",
+        "credential theft",
+        "data breach"
+      ],
+      "best_quick_win_id": "q3",
+      "best_quick_win_label": "Access Control"
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 0,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 0,
+        "Endpoint Security": 0,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q3",
+        "q2",
+        "q5",
+        "q18"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Access Control",
+        "Access Control",
+        "Endpoint Security",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "credential theft"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 0,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 0,
+        "Endpoint Security": 0,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q3",
+        "q2",
+        "q5",
+        "q18"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Access Control",
+        "Access Control",
+        "Endpoint Security",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "credential theft"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 36,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 100,
+        "Endpoint Security": 100,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q18",
+        "q9",
+        "q7",
+        "q14"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Incident Response",
+        "Data Protection",
+        "Patch Management",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "known vulnerability exploit"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
+    },
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 36,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 100,
+        "Endpoint Security": 100,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q18",
+        "q9",
+        "q7",
+        "q14"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Incident Response",
+        "Data Protection",
+        "Patch Management",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "known vulnerability exploit"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
     }
   ],
   "Org 2": [
@@ -121,6 +472,44 @@
         "Backup & Recovery": 76,
         "Incident Response": 100
       }
+    }
+  ],
+  "3": [
+    {
+      "date": "2026-03-27",
+      "org_type": "School",
+      "org_size": "1-10 employees",
+      "overall_score": 36,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 100,
+        "Endpoint Security": 100,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q18",
+        "q9",
+        "q7",
+        "q14"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Incident Response",
+        "Data Protection",
+        "Patch Management",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "known vulnerability exploit"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
     }
   ]
 }

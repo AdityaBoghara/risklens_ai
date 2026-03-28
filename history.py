@@ -34,6 +34,8 @@ def get_last_assessment(org_name: str) -> Optional[Dict]:
 def save_assessment(org_name: str, org_type: str, org_size: str, results: Dict) -> None:
     """Append today's assessment to the history for org_name."""
     data = _load()
+    top_actions = results.get("top_actions", [])
+    quick_wins = results.get("quick_wins", [])
     entry = {
         "date": date.today().isoformat(),
         "org_type": org_type,
@@ -41,6 +43,12 @@ def save_assessment(org_name: str, org_type: str, org_size: str, results: Dict) 
         "overall_score": results["overall_score"],
         "risk_level": results["risk_level"],
         "category_scores": results["category_scores"],
+        # Narrative fields
+        "top_action_ids": [a["id"] for a in top_actions],
+        "top_action_categories": [a["category"] for a in top_actions],
+        "dominant_threats": results.get("dominant_threats", []),
+        "best_quick_win_id": quick_wins[0]["id"] if quick_wins else None,
+        "best_quick_win_label": quick_wins[0]["category"] if quick_wins else None,
     }
     data.setdefault(org_name, []).append(entry)
     _save(data)

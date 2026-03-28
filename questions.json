@@ -8,7 +8,22 @@
       "impact": 1.5,
       "remediation": "Enable MFA on email, VPN, admin portals, and cloud apps for all users.",
       "why_it_matters": "MFA sharply reduces account-takeover risk when passwords are stolen.",
-      "framework_map": "NIST PR.AA / CIS Control 6 / ISO 27001 A.9.4.2"
+      "framework_map": "NIST PR.AA / CIS Control 6 / ISO 27001 A.9.4.2",
+      "effort": "Medium",
+      "time_to_value": "Days",
+      "depends_on": ["q2"],
+      "threats": ["credential theft", "account takeover", "phishing"],
+      "business_impact": "Prevents account takeover even when passwords are stolen or leaked.",
+      "quick_win": false,
+      "simulation_gain_hint": 40,
+      "follow_up_if_no": [
+        "Which systems lack MFA today?",
+        "Is MFA available on your platform but not yet enforced?"
+      ],
+      "org_relevance": {
+        "Clinic": 3,
+        "School": 3
+      }
     },
     {
       "id": "q2",
@@ -18,7 +33,21 @@
       "impact": 1.2,
       "remediation": "Enforce strong unique passwords and deploy a password manager.",
       "why_it_matters": "Weak or reused passwords are a common path for compromise.",
-      "framework_map": "NIST PR.AA / CIS Control 5 / ISO 27001 A.9.4.3"
+      "framework_map": "NIST PR.AA / CIS Control 5 / ISO 27001 A.9.4.3",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["credential theft", "password spraying", "brute force"],
+      "business_impact": "Eliminates the most common pathway for initial unauthorized access.",
+      "quick_win": true,
+      "simulation_gain_hint": 25,
+      "follow_up_if_no": [
+        "Are employees using personal password managers on their own?",
+        "Is password length or complexity currently enforced by policy?"
+      ],
+      "org_relevance": {
+        "Startup": 2
+      }
     },
     {
       "id": "q3",
@@ -28,7 +57,22 @@
       "impact": 1.3,
       "remediation": "Create an offboarding checklist that disables accounts and revokes access immediately.",
       "why_it_matters": "Stale accounts increase the chance of unauthorized access.",
-      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.6"
+      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.6",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["insider threat", "unauthorized access", "account abuse"],
+      "business_impact": "Closes access paths that departing employees or contractors could exploit.",
+      "quick_win": true,
+      "simulation_gain_hint": 20,
+      "follow_up_if_no": [
+        "How long does it currently take to disable an account after someone leaves?",
+        "Are shared credentials rotated when a team member departs?"
+      ],
+      "org_relevance": {
+        "Startup": 3,
+        "Nonprofit": 2
+      }
     },
     {
       "id": "q4",
@@ -38,7 +82,22 @@
       "impact": 1.2,
       "remediation": "Install and centrally manage endpoint protection on all company devices.",
       "why_it_matters": "Endpoint controls help detect malware, ransomware, and suspicious execution.",
-      "framework_map": "NIST PR.IP / CIS Control 10 / ISO 27001 A.12.2.1"
+      "framework_map": "NIST PR.IP / CIS Control 10 / ISO 27001 A.12.2.1",
+      "effort": "Medium",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["malware", "ransomware", "fileless attack"],
+      "business_impact": "Detects and blocks malicious code before it can spread or encrypt data.",
+      "quick_win": false,
+      "simulation_gain_hint": 30,
+      "follow_up_if_no": [
+        "Is any endpoint monitoring in place, even basic OS-level tools?",
+        "Are personal or BYOD devices used to access company resources?"
+      ],
+      "org_relevance": {
+        "Clinic": 2,
+        "School": 2
+      }
     },
     {
       "id": "q5",
@@ -48,7 +107,21 @@
       "impact": 1.2,
       "remediation": "Enable full-disk encryption on laptops and mobile devices.",
       "why_it_matters": "Encryption prevents data exposure when devices are lost, stolen, or repurposed.",
-      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.10.1.1"
+      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.10.1.1",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["physical theft", "data breach", "lost device"],
+      "business_impact": "Protects sensitive data on lost or stolen devices from unauthorized access.",
+      "quick_win": true,
+      "simulation_gain_hint": 20,
+      "follow_up_if_no": [
+        "Do employees regularly take laptops off-site or work remotely?",
+        "Are employees aware of the compliance risk of unencrypted devices?"
+      ],
+      "org_relevance": {
+        "Clinic": 3
+      }
     },
     {
       "id": "q6",
@@ -58,7 +131,21 @@
       "impact": 1.3,
       "remediation": "Establish patching windows and track critical updates to completion.",
       "why_it_matters": "Unpatched systems are often exploited through known vulnerabilities.",
-      "framework_map": "NIST PR.IP / CIS Control 7 / ISO 27001 A.12.6.1"
+      "framework_map": "NIST PR.IP / CIS Control 7 / ISO 27001 A.12.6.1",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q7"],
+      "threats": ["known vulnerability exploit", "ransomware", "supply chain attack"],
+      "business_impact": "Closes publicly known vulnerabilities that attackers actively scan for and exploit.",
+      "quick_win": false,
+      "simulation_gain_hint": 35,
+      "follow_up_if_no": [
+        "How old are the oldest unpatched systems?",
+        "Is patching delayed due to compatibility concerns or lack of ownership?"
+      ],
+      "org_relevance": {
+        "Startup": 3
+      }
     },
     {
       "id": "q7",
@@ -68,7 +155,21 @@
       "impact": 1.2,
       "remediation": "Maintain an asset and patch compliance inventory with exception tracking.",
       "why_it_matters": "You cannot remediate patch gaps reliably without visibility.",
-      "framework_map": "NIST ID.AM / CIS Control 1, 7 / ISO 27001 A.8.1.1, A.12.6.1"
+      "framework_map": "NIST ID.AM / CIS Control 1, 7 / ISO 27001 A.8.1.1, A.12.6.1",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": [],
+      "threats": ["known vulnerability exploit", "undetected compromise"],
+      "business_impact": "Provides the visibility needed to prioritize and close the highest-risk patch gaps.",
+      "quick_win": false,
+      "simulation_gain_hint": 15,
+      "follow_up_if_no": [
+        "Is there at least a manual inventory of company devices?",
+        "Who is currently responsible for tracking software versions?"
+      ],
+      "org_relevance": {
+        "Startup": 2
+      }
     },
     {
       "id": "q8",
@@ -78,7 +179,22 @@
       "impact": 1.3,
       "remediation": "Classify sensitive data and secure it using approved storage and access controls.",
       "why_it_matters": "Improper storage increases exposure risk and regulatory impact.",
-      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.8.2.3"
+      "framework_map": "NIST PR.DS / CIS Control 3 / ISO 27001 A.8.2.3",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q9"],
+      "threats": ["data breach", "regulatory violation", "ransomware"],
+      "business_impact": "Reduces breach damage, regulatory fines, and reputational harm from exposed sensitive data.",
+      "quick_win": false,
+      "simulation_gain_hint": 30,
+      "follow_up_if_no": [
+        "Has sensitive data been classified or inventoried?",
+        "Is any data stored in personal cloud accounts or unapproved shadow IT tools?"
+      ],
+      "org_relevance": {
+        "Clinic": 4,
+        "School": 2
+      }
     },
     {
       "id": "q9",
@@ -88,7 +204,21 @@
       "impact": 1.3,
       "remediation": "Apply least-privilege access and review permissions regularly.",
       "why_it_matters": "Overbroad access increases both internal misuse and breach blast radius.",
-      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.3"
+      "framework_map": "NIST PR.AC / CIS Control 6 / ISO 27001 A.9.2.3",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q3"],
+      "threats": ["insider threat", "data breach", "lateral movement"],
+      "business_impact": "Limits how much data an attacker or malicious insider can access after a compromise.",
+      "quick_win": false,
+      "simulation_gain_hint": 25,
+      "follow_up_if_no": [
+        "Are permissions reviewed when employees change roles?",
+        "Do most users have admin or broad read access by default?"
+      ],
+      "org_relevance": {
+        "Clinic": 3
+      }
     },
     {
       "id": "q10",
@@ -98,7 +228,22 @@
       "impact": 1.4,
       "remediation": "Implement automated backups for critical data and systems.",
       "why_it_matters": "Backups are essential for recovery from ransomware, deletion, or outage.",
-      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1"
+      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["ransomware", "accidental deletion", "hardware failure"],
+      "business_impact": "Enables full recovery without paying ransom or permanently losing critical business data.",
+      "quick_win": true,
+      "simulation_gain_hint": 40,
+      "follow_up_if_no": [
+        "Are any critical files backed up manually or ad hoc?",
+        "When was the last known good backup taken?"
+      ],
+      "org_relevance": {
+        "Clinic": 4,
+        "Nonprofit": 3
+      }
     },
     {
       "id": "q11",
@@ -108,7 +253,22 @@
       "impact": 1.4,
       "remediation": "Run restore tests on a defined schedule and record results.",
       "why_it_matters": "Untested backups often fail during real incidents when recovery matters most.",
-      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1"
+      "framework_map": "NIST PR.IP / CIS Control 11 / ISO 27001 A.12.3.1",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": ["q10"],
+      "threats": ["ransomware", "disaster recovery failure"],
+      "business_impact": "Confirms recovery actually works before a crisis, not during one.",
+      "quick_win": true,
+      "simulation_gain_hint": 20,
+      "follow_up_if_no": [
+        "When was the last time a backup restore was attempted or verified?",
+        "Is backup integrity verified automatically by the backup tool?"
+      ],
+      "org_relevance": {
+        "Clinic": 3,
+        "Nonprofit": 2
+      }
     },
     {
       "id": "q12",
@@ -118,7 +278,22 @@
       "impact": 1.3,
       "remediation": "Create a concise incident response playbook with roles, contacts, and escalation steps.",
       "why_it_matters": "A defined response plan reduces confusion, downtime, and damage during incidents.",
-      "framework_map": "NIST RS / CIS Control 17 / ISO 27001 A.16.1.1"
+      "framework_map": "NIST RS / CIS Control 17 / ISO 27001 A.16.1.1",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q18"],
+      "threats": ["ransomware", "data breach", "insider threat"],
+      "business_impact": "Reduces downtime, reputational damage, and recovery costs when an incident occurs.",
+      "quick_win": false,
+      "simulation_gain_hint": 25,
+      "follow_up_if_no": [
+        "Has the organization ever dealt with a security incident without a documented plan?",
+        "Are key contacts and escalation paths at least informally known?"
+      ],
+      "org_relevance": {
+        "Nonprofit": 3,
+        "Clinic": 2
+      }
     },
     {
       "id": "q13",
@@ -128,7 +303,22 @@
       "impact": 1.1,
       "remediation": "Provide periodic training on phishing, passwords, safe browsing, and reporting.",
       "why_it_matters": "Human behavior is a major factor in phishing and credential compromise.",
-      "framework_map": "NIST PR.AT / CIS Control 14 / ISO 27001 A.7.2.2"
+      "framework_map": "NIST PR.AT / CIS Control 14 / ISO 27001 A.7.2.2",
+      "effort": "Low",
+      "time_to_value": "Weeks",
+      "depends_on": ["q18"],
+      "threats": ["phishing", "social engineering", "credential theft"],
+      "business_impact": "Reduces the likelihood that employees become the entry point for attacks.",
+      "quick_win": true,
+      "simulation_gain_hint": 30,
+      "follow_up_if_no": [
+        "Have employees recently encountered or clicked on phishing attempts?",
+        "Is any informal security guidance shared with staff?"
+      ],
+      "org_relevance": {
+        "School": 4,
+        "Nonprofit": 2
+      }
     },
     {
       "id": "q14",
@@ -138,7 +328,21 @@
       "impact": 1.1,
       "remediation": "Set a simple reporting channel and teach staff when and how to use it.",
       "why_it_matters": "Fast reporting shortens attacker dwell time and improves containment.",
-      "framework_map": "NIST RS.AN / CIS Control 17 / ISO 27001 A.16.1.2"
+      "framework_map": "NIST RS.AN / CIS Control 17 / ISO 27001 A.16.1.2",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": ["q13"],
+      "threats": ["phishing", "social engineering"],
+      "business_impact": "Shortens attacker dwell time by surfacing threats through employee reports.",
+      "quick_win": true,
+      "simulation_gain_hint": 15,
+      "follow_up_if_no": [
+        "Do employees know who to contact if they suspect a phishing email?",
+        "Has a phishing attempt ever gone unnoticed or unreported?"
+      ],
+      "org_relevance": {
+        "School": 3
+      }
     },
     {
       "id": "q15",
@@ -148,7 +352,21 @@
       "impact": 1.2,
       "remediation": "Use dedicated admin accounts for privileged activity and standard accounts for daily work.",
       "why_it_matters": "Separate admin accounts reduce the impact of phishing and routine misuse.",
-      "framework_map": "NIST PR.AC / CIS Control 5, 6 / ISO 27001 A.9.2.3"
+      "framework_map": "NIST PR.AC / CIS Control 5, 6 / ISO 27001 A.9.2.3",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q1", "q2"],
+      "threats": ["privilege escalation", "credential theft", "phishing"],
+      "business_impact": "Prevents a compromised everyday account from granting full administrative access.",
+      "quick_win": false,
+      "simulation_gain_hint": 20,
+      "follow_up_if_no": [
+        "Do admins currently use the same account for email and system administration?",
+        "How many employees have admin-level privileges?"
+      ],
+      "org_relevance": {
+        "Startup": 2
+      }
     },
     {
       "id": "q16",
@@ -158,7 +376,22 @@
       "impact": 1.2,
       "remediation": "Enable alerting for anomalous logins, failed attempts, and impossible travel.",
       "why_it_matters": "Identity monitoring helps surface active account abuse early.",
-      "framework_map": "NIST DE.CM / CIS Control 8 / ISO 27001 A.12.4.1"
+      "framework_map": "NIST DE.CM / CIS Control 8 / ISO 27001 A.12.4.1",
+      "effort": "Medium",
+      "time_to_value": "Weeks",
+      "depends_on": ["q1", "q15"],
+      "threats": ["account takeover", "credential stuffing", "insider threat"],
+      "business_impact": "Surfaces active attacks before they escalate to data theft or system damage.",
+      "quick_win": false,
+      "simulation_gain_hint": 25,
+      "follow_up_if_no": [
+        "Are any alerting or logging tools currently in use?",
+        "Has anomalous account activity gone undetected in the past?"
+      ],
+      "org_relevance": {
+        "Clinic": 2,
+        "Startup": 2
+      }
     },
     {
       "id": "q17",
@@ -168,7 +401,22 @@
       "impact": 1.1,
       "remediation": "Establish a lightweight vendor review checklist before granting access.",
       "why_it_matters": "Third parties can introduce security and compliance risk into your environment.",
-      "framework_map": "NIST ID.SC / CIS Control 15 / ISO 27001 A.15.1.1"
+      "framework_map": "NIST ID.SC / CIS Control 15 / ISO 27001 A.15.1.1",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": ["q9"],
+      "threats": ["supply chain attack", "data breach", "third-party compromise"],
+      "business_impact": "Prevents vendors from becoming an unmonitored back door into your environment.",
+      "quick_win": true,
+      "simulation_gain_hint": 15,
+      "follow_up_if_no": [
+        "How many third-party tools currently have access to business data?",
+        "Have vendors ever been asked about their own security practices?"
+      ],
+      "org_relevance": {
+        "Startup": 2,
+        "Clinic": 2
+      }
     },
     {
       "id": "q18",
@@ -178,7 +426,22 @@
       "impact": 1.1,
       "remediation": "Assign a named owner for security decisions, escalation, and accountability.",
       "why_it_matters": "Ownership is necessary to drive remediation and maintain security practices.",
-      "framework_map": "NIST ID.GV / CIS Control 17 / ISO 27001 A.6.1.1"
+      "framework_map": "NIST ID.GV / CIS Control 17 / ISO 27001 A.6.1.1",
+      "effort": "Low",
+      "time_to_value": "Days",
+      "depends_on": [],
+      "threats": ["governance failure", "delayed incident response"],
+      "business_impact": "Ensures someone is accountable for acting on security risks before they become incidents.",
+      "quick_win": true,
+      "simulation_gain_hint": 10,
+      "follow_up_if_no": [
+        "Who currently handles security-related issues informally?",
+        "Is cybersecurity discussed at a leadership or board level?"
+      ],
+      "org_relevance": {
+        "Nonprofit": 3,
+        "School": 2
+      }
     }
   ],
   "answer_factors": {

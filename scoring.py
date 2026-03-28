@@ -1,4 +1,5 @@
-from typing import Dict
+from collections import Counter
+from typing import Dict, List
 
 from data import (
     ANSWER_FACTORS,
@@ -9,12 +10,19 @@ from data import (
     Question,
 )
 
+EFFORT_SCORES: Dict[str, int] = {"Low": 1, "Medium": 2, "High": 3}
+TIME_TO_VALUE_SCORES: Dict[str, float] = {"Days": 1.2, "Weeks": 1.0, "Months": 0.8}
+
 
 def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
     overrides = ORG_TYPE_WEIGHT_OVERRIDES.get(org_type, {})
 
     def effective_weight(q: Question) -> int:
-        return overrides.get(q.id, q.weight)
+        base = overrides.get(q.id, q.weight)
+        # Apply per-org relevance boost from the question itself
+        if q.org_relevance and org_type in q.org_relevance:
+            base += q.org_relevance[org_type]
+        return base
 
     max_risk = sum(effective_weight(q) for q in QUESTIONS)
     total_risk = 0.0
@@ -37,6 +45,11 @@ def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
         category_totals[q.category]["max"] += w
 
         if answer != "Yes":
+            risk_score = round(w * q.impact * urgency, 2)
+            effort = EFFORT_SCORES[q.effort]
+            ttv = TIME_TO_VALUE_SCORES[q.time_to_value]
+            roi_score = round((risk_score * ttv) / effort, 3)
+
             findings.append(
                 {
                     "id": q.id,
@@ -46,7 +59,17 @@ def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
                     "weight": w,
                     "impact": q.impact,
                     "urgency": urgency,
-                    "priority_score": round(w * q.impact * urgency, 2),
+                    "risk_score": risk_score,
+                    "implementation_effort_score": effort,
+                    "roi_score": roi_score,
+                    "effort": q.effort,
+                    "time_to_value": q.time_to_value,
+                    "quick_win": q.quick_win,
+                    "threats": q.threats,
+                    "business_impact": q.business_impact,
+                    "simulation_gain_hint": q.simulation_gain_hint,
+                    "depends_on": q.depends_on,
+                    "follow_up_if_no": q.follow_up_if_no,
                     "remediation": q.remediation,
                     "why_it_matters": q.why_it_matters,
                     "framework_map": q.framework_map,
@@ -69,7 +92,67 @@ def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
         score = round(100 * (1 - vals["actual"] / vals["max"])) if vals["max"] else 100
         category_scores[category] = score
 
-    prioritized_findings = sorted(findings, key=lambda x: x["priority_score"], reverse=True)
+    # IDs of all failing controls
+    failing_ids = {f["id"] for f in findings}
+
+    # A control is blocked if any prerequisite is itself failing
+    def is_blocked(finding: Dict) -> bool:
+        return any(dep in failing_ids for dep in finding["depends_on"])
+
+    control_dependencies_blocked: List[Dict] = [
+        {"id": f["id"], "question": f["question"], "blocked_by": [d for d in f["depends_on"] if d in failing_ids]}
+        for f in findings
+        if is_blocked(f)
+    ]
+    blocked_ids = {b["id"] for b in control_dependencies_blocked}
+
+    findings_by_risk = sorted(findings, key=lambda x: x["risk_score"], reverse=True)
+    findings_by_roi = sorted(findings, key=lambda x: x["roi_score"], reverse=True)
+
+    # Quick wins: marked as such in question data and not blocked by unresolved deps
+    quick_wins = [f for f in findings_by_roi if f["quick_win"] and f["id"] not in blocked_ids]
+
+    # Top actions: ROI-ranked, unblocked controls first, then blocked ones appended at end
+    unblocked_by_roi = [f for f in findings_by_roi if f["id"] not in blocked_ids]
+    blocked_by_roi = [f for f in findings_by_roi if f["id"] in blocked_ids]
+    top_actions = (unblocked_by_roi + blocked_by_roi)[:5]
+
+    # Simulations: every failing control with a non-zero gain hint, sorted by hint desc
+    simulations = sorted(
+        [
+            {
+                "id": f["id"],
+                "question": f["question"],
+                "category": f["category"],
+                "answer": f["answer"],
+                "risk_score": f["risk_score"],
+                "simulation_gain_hint": f["simulation_gain_hint"],
+            }
+            for f in findings
+            if f["simulation_gain_hint"] > 0
+        ],
+        key=lambda x: x["simulation_gain_hint"],
+        reverse=True,
+    )
+
+    # Threat aggregation across all failing controls
+    threat_counter: Counter = Counter()
+    for f in findings:
+        threat_counter.update(f["threats"])
+    threat_summary = dict(threat_counter.most_common())
+    dominant_threats: List[str] = [t for t, _ in threat_counter.most_common(3)]
+
+    # Plain-language summary data: weakest categories + dominant threats
+    weakest_categories = sorted(
+        [(cat, score) for cat, score in category_scores.items()],
+        key=lambda x: x[1],
+    )[:3]
+    plain_language_summary_data = {
+        "weakest_categories": [{"category": cat, "score": score} for cat, score in weakest_categories],
+        "dominant_threats": dominant_threats,
+        "total_failing": len(findings),
+        "quick_win_count": len(quick_wins),
+    }
 
     return {
         "overall_score": overall_score,
@@ -77,6 +160,15 @@ def calculate_results(answers: Dict[str, str], org_type: str = "") -> Dict:
         "category_scores": category_scores,
         "max_risk": max_risk,
         "actual_risk": round(total_risk, 2),
-        "findings": prioritized_findings,
-        "top_actions": prioritized_findings[:3],
+        "findings_by_risk": findings_by_risk,
+        "findings_by_roi": findings_by_roi,
+        "quick_wins": quick_wins,
+        "simulations": simulations,
+        "threat_summary": threat_summary,
+        "dominant_threats": dominant_threats,
+        "control_dependencies_blocked": control_dependencies_blocked,
+        "top_actions": top_actions,
+        "plain_language_summary_data": plain_language_summary_data,
+        # Keep legacy key so existing callers don't break before they're updated
+        "findings": findings_by_risk,
     }
