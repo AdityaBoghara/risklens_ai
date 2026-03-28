@@ -691,5 +691,79 @@
       "best_quick_win_id": "q10",
       "best_quick_win_label": "Backup & Recovery"
     }
+  ],
+  "Riverside Family Clinic": [
+    {
+      "date": "2026-03-28",
+      "org_type": "Clinic",
+      "org_size": "11-50 employees",
+      "overall_score": 24,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 9,
+        "Endpoint Security": 43,
+        "Data Protection": 20,
+        "Patch Management": 26,
+        "Backup & Recovery": 53,
+        "Incident Response": 11
+      },
+      "top_action_ids": [
+        "q11",
+        "q5",
+        "q3",
+        "q2",
+        "q18"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Endpoint Security",
+        "Access Control",
+        "Access Control",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "data breach",
+        "credential theft",
+        "phishing"
+      ],
+      "best_quick_win_id": "q11",
+      "best_quick_win_label": "Backup & Recovery"
+    },
+    {
+      "date": "2026-03-28",
+      "org_type": "Clinic",
+      "org_size": "11-50 employees",
+      "overall_score": 24,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 9,
+        "Endpoint Security": 43,
+        "Data Protection": 20,
+        "Patch Management": 26,
+        "Backup & Recovery": 53,
+        "Incident Response": 11
+      },
+      "top_action_ids": [
+        "q11",
+        "q5",
+        "q3",
+        "q2",
+        "q18"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Endpoint Security",
+        "Access Control",
+        "Access Control",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "data breach",
+        "credential theft",
+        "phishing"
+      ],
+      "best_quick_win_id": "q11",
+      "best_quick_win_label": "Backup & Recovery"
+    }
   ]
 }

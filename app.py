@@ -8,7 +8,7 @@ import plotly.graph_objects as go
 import streamlit as st
 
 from benchmarks import get_baseline, peer_comparison
-from data import CATEGORY_ORDER, QUESTIONS
+from data import CATEGORY_ORDER, ORG_TYPE_WEIGHT_OVERRIDES, QUESTIONS
 from history import get_all_assessments, get_last_assessment, save_assessment
 from report import build_llm_payload, generate_ai_report
 from scoring import calculate_results
@@ -52,15 +52,187 @@ def _render_narrative_trend(all_entries: list) -> None:
             st.markdown(f"- {line}")
 
 
+# ---------------------------------------------------------------------------
+# Demo mode: pre-filled "small clinic with critical gaps" scenario
+# ---------------------------------------------------------------------------
+CLINIC_DEMO_ANSWERS = {
+    "q1": "No",          # No MFA
+    "q2": "Partially",   # Weak password hygiene
+    "q3": "No",          # Former employees not removed promptly
+    "q4": "Yes",         # Basic antivirus present
+    "q5": "No",          # Devices not encrypted
+    "q6": "Partially",   # Irregular patching
+    "q7": "No",          # No patch tracking
+    "q8": "Partially",   # Patient data partially secured
+    "q9": "No",          # Broad data access
+    "q10": "Yes",        # Backups exist
+    "q11": "No",         # Backups never tested
+    "q12": "No",         # No incident response plan
+    "q13": "No",         # No security training
+    "q14": "Partially",  # Some phishing awareness
+    "q15": "No",         # No separate admin accounts
+    "q16": "No",         # No login monitoring
+    "q17": "Don't Know", # Vendor review unknown
+    "q18": "No",         # No security owner
+}
+
+def _load_clinic_demo() -> None:
+    st.session_state.answers = dict(CLINIC_DEMO_ANSWERS)
+    for qid, ans in CLINIC_DEMO_ANSWERS.items():
+        st.session_state[f"radio_{qid}"] = ans
+    st.session_state["org_name"] = "Riverside Family Clinic"
+    st.session_state["org_type"] = "Clinic"
+    st.session_state["org_size"] = "11-50 employees"
+    st.session_state["_trigger_run"] = True
+    st.session_state["_demo_initialized"] = True
+
+
 st.set_page_config(page_title="RiskLens AI", page_icon="🛡️", layout="wide")
-st.title("RiskLens AI")
-st.caption("Cyber risk assessment assistant for small organizations")
+
+st.markdown(
+    """
+    <style>
+    .hero-section {
+        background: linear-gradient(135deg, #0d1b2a 0%, #1b2a3b 60%, #1a3a4a 100%);
+        border-radius: 12px;
+        padding: 48px 48px 36px 48px;
+        margin-bottom: 8px;
+        color: #fff;
+    }
+    .hero-badge {
+        display: inline-block;
+        background: rgba(99,210,255,0.15);
+        border: 1px solid rgba(99,210,255,0.4);
+        color: #63d2ff;
+        font-size: 0.78rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        padding: 4px 12px;
+        border-radius: 20px;
+        margin-bottom: 18px;
+        text-transform: uppercase;
+    }
+    .hero-title {
+        font-size: 2.4rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin: 0 0 12px 0;
+        color: #fff;
+    }
+    .hero-title span { color: #63d2ff; }
+    .hero-subtitle {
+        font-size: 1.15rem;
+        color: #b0c4d8;
+        margin: 0 0 32px 0;
+        max-width: 560px;
+    }
+    .hero-stats {
+        display: flex;
+        gap: 32px;
+        margin-bottom: 36px;
+        flex-wrap: wrap;
+    }
+    .hero-stat {
+        text-align: center;
+    }
+    .hero-stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #63d2ff;
+        line-height: 1;
+    }
+    .hero-stat-label {
+        font-size: 0.82rem;
+        color: #8aafc8;
+        margin-top: 4px;
+        white-space: nowrap;
+    }
+    .hero-cta {
+        display: inline-block;
+        background: #63d2ff;
+        color: #0d1b2a !important;
+        font-weight: 700;
+        font-size: 1rem;
+        padding: 12px 32px;
+        border-radius: 8px;
+        text-decoration: none !important;
+        transition: background 0.2s;
+        border: none;
+        cursor: pointer;
+    }
+    .hero-cta:hover { background: #89dcff; }
+    .hero-frameworks {
+        margin-top: 28px;
+        font-size: 0.8rem;
+        color: #6a8fa8;
+    }
+    .hero-frameworks span {
+        background: rgba(255,255,255,0.07);
+        border-radius: 4px;
+        padding: 2px 8px;
+        margin-right: 6px;
+    }
+    </style>
+
+    <div class="hero-section">
+        <div class="hero-badge">🛡️ Cyber Risk Intelligence</div>
+        <h1 class="hero-title">Cyber risk scores for small orgs<br>in <span>under 5 minutes</span></h1>
+        <p class="hero-subtitle">
+            Answer 18 plain-language questions. Get a scored risk report with prioritized fixes,
+            peer benchmarks, and AI-generated remediation guidance — no security team required.
+        </p>
+        <div class="hero-stats">
+            <div class="hero-stat">
+                <div class="hero-stat-number">18</div>
+                <div class="hero-stat-label">Security Controls</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">6</div>
+                <div class="hero-stat-label">Risk Categories</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">&lt;5 min</div>
+                <div class="hero-stat-label">To Complete</div>
+            </div>
+            <div class="hero-stat">
+                <div class="hero-stat-number">3</div>
+                <div class="hero-stat-label">Frameworks Mapped</div>
+            </div>
+        </div>
+        <a class="hero-cta" href="#assessment-questionnaire">Start Assessment ↓</a>
+        <div class="hero-frameworks">
+            Framework coverage: &nbsp;
+            <span>NIST CSF</span><span>CIS Controls</span><span>ISO 27001</span>
+        </div>
+    </div>
+    """,
+    unsafe_allow_html=True,
+)
 
 with st.sidebar:
+    # --- Demo mode: URL param or button ---
+    if st.query_params.get("demo") == "clinic" and not st.session_state.get("_demo_initialized"):
+        _load_clinic_demo()
+
+    st.markdown("### Try a Demo")
+    if st.button("🏥 Load Clinic Demo", help="Pre-fills a small clinic with critical security gaps — skip straight to results", use_container_width=True):
+        _load_clinic_demo()
+        st.rerun()
+    st.caption("Skips the questionnaire and shows a realistic high-risk clinic scenario.")
+    st.markdown("---")
+
     st.header("Organization Profile")
-    org_name = st.text_input("Organization Name", value="Sample Organization")
-    org_type = st.selectbox("Organization Type", ["Small Business", "Nonprofit", "School", "Clinic", "Startup", "Other"])
-    org_size = st.selectbox("Organization Size", ["1-10 employees", "11-50 employees", "51-200 employees", "201+ employees"])
+    if "org_name" not in st.session_state:
+        st.session_state["org_name"] = "Sample Organization"
+    org_name = st.text_input("Organization Name", key="org_name")
+    _org_type_options = ["Small Business", "Nonprofit", "School", "Clinic", "Startup", "Other"]
+    if "org_type" not in st.session_state:
+        st.session_state["org_type"] = "Small Business"
+    org_type = st.selectbox("Organization Type", _org_type_options, key="org_type")
+    _org_size_options = ["1-10 employees", "11-50 employees", "51-200 employees", "201+ employees"]
+    if "org_size" not in st.session_state:
+        st.session_state["org_size"] = "1-10 employees"
+    org_size = st.selectbox("Organization Size", _org_size_options, key="org_size")
     st.markdown("---")
     st.write("Scoring bands")
     st.write("80–100: Low")
@@ -68,6 +240,7 @@ with st.sidebar:
     st.write("40–59: High")
     st.write("0–39: Critical")
 
+st.markdown('<div id="assessment-questionnaire"></div>', unsafe_allow_html=True)
 st.subheader("Assessment Questionnaire")
 
 if "answers" not in st.session_state:
@@ -101,7 +274,7 @@ st.caption(f"{answered_count}/{total_count} answered")
 if answered_count < total_count:
     st.info(f"{total_count - answered_count} question(s) not yet answered — they will be treated as \"Don't Know\".")
 
-if st.button("Run Assessment", type="primary"):
+if st.button("Run Assessment", type="primary") or st.session_state.pop("_trigger_run", False):
     prior = get_last_assessment(org_name)
     results = calculate_results(answers, org_type=org_type)
     save_assessment(org_name, org_type, org_size, results)
@@ -157,6 +330,100 @@ else:
               delta=f"was {prior['risk_level']} on {prior['date']}" if prior and prior["risk_level"] != results["risk_level"] else None,
               delta_color="off")
     c3.metric("Unmet Controls", str(len(results["findings"])))
+
+    # --- How is my score calculated? ---
+    with st.expander("🔍 How is my score calculated?"):
+        st.markdown(
+            """
+**RiskLens AI uses a fully deterministic, transparent formula — no black-box AI, no hidden model.**
+
+---
+### Step 1 — Answer factors
+Each answer maps to a **risk factor** (how much risk the answer contributes):
+
+| Answer | Risk factor |
+|---|---|
+| Yes | 0.0 (no risk) |
+| Partially | 0.5 |
+| No | 1.0 (full risk) |
+| Don't Know | 1.0 (treated as No) |
+
+---
+### Step 2 — Question weights
+Each control has a **weight** (1–12) reflecting its relative importance. Higher weight = bigger impact on your score.
+"""
+        )
+
+        overrides = ORG_TYPE_WEIGHT_OVERRIDES.get(org_type_snap, {})
+        weight_rows = []
+        for q in QUESTIONS:
+            base_w = q.weight
+            override_w = overrides.get(q.id)
+            if override_w is not None:
+                w_display = f"{override_w} (base: {base_w}, boosted for {org_type_snap})"
+            else:
+                w_display = str(base_w)
+            weight_rows.append({
+                "#": q.id.upper(),
+                "Control": q.text,
+                "Category": q.category,
+                "Weight": w_display,
+            })
+        st.dataframe(weight_rows, use_container_width=True, hide_index=True)
+
+        st.markdown(
+            f"""
+---
+### Step 3 — Overall score formula
+
+```
+risk_contribution  = weight × answer_factor        (per question)
+total_risk         = Σ risk_contributions           (all 18 questions)
+max_possible_risk  = Σ weights                      (if every answer were "No")
+overall_score      = 100 × (1 − total_risk / max_possible_risk)
+```
+
+**Your numbers this run:**
+- Max possible risk: **{results['max_risk']}**
+- Actual risk accumulated: **{results['actual_risk']}**
+- Overall score: **100 × (1 − {results['actual_risk']} / {results['max_risk']}) = {results['overall_score']}/100**
+
+---
+### Step 4 — Category scores
+The same formula applies within each category using only the questions that belong to it.
+
+---
+### Step 5 — Priority ranking (ROI score)
+Failing controls are ranked by:
+```
+risk_score = weight × impact × urgency_factor
+roi_score  = (risk_score × time_to_value_factor) / effort_factor
+```
+
+**Urgency factors** — how seriously each answer counts toward prioritization:
+
+| Answer | Urgency factor |
+|---|---|
+| No | 1.0 |
+| Don't Know | 0.9 |
+| Partially | 0.7 |
+
+**Effort factors:** Low = 1 · Medium = 2 · High = 3
+
+**Time-to-value factors:** Days = 1.2 · Weeks = 1.0 · Months = 0.8
+
+Higher ROI score → control appears earlier in your priority action list.
+
+---
+### Risk bands
+| Score | Risk level |
+|---|---|
+| 80–100 | Low |
+| 60–79 | Moderate |
+| 40–59 | High |
+| 0–39 | Critical |
+"""
+        )
 
     # --- Section A: Biggest Risk Right Now ---
     pls = results["plain_language_summary_data"]
