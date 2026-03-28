@@ -605,6 +605,42 @@
       ],
       "best_quick_win_id": "q10",
       "best_quick_win_label": "Backup & Recovery"
+    },
+    {
+      "date": "2026-03-28",
+      "org_type": "Small Business",
+      "org_size": "1-10 employees",
+      "overall_score": 0,
+      "risk_level": "Critical",
+      "category_scores": {
+        "Access Control": 0,
+        "Endpoint Security": 0,
+        "Data Protection": 0,
+        "Patch Management": 0,
+        "Backup & Recovery": 0,
+        "Incident Response": 0
+      },
+      "top_action_ids": [
+        "q10",
+        "q3",
+        "q2",
+        "q5",
+        "q18"
+      ],
+      "top_action_categories": [
+        "Backup & Recovery",
+        "Access Control",
+        "Access Control",
+        "Endpoint Security",
+        "Incident Response"
+      ],
+      "dominant_threats": [
+        "ransomware",
+        "data breach",
+        "credential theft"
+      ],
+      "best_quick_win_id": "q10",
+      "best_quick_win_label": "Backup & Recovery"
     }
   ],
   "Org 2": [

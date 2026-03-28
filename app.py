@@ -1,5 +1,6 @@
 import csv
 import io
+from collections import defaultdict
 
 import xlsxwriter
 
@@ -13,6 +14,7 @@ from history import get_all_assessments, get_last_assessment, save_assessment
 from report import build_llm_payload, generate_ai_report
 from scoring import calculate_results
 from simulator import simulate_bundle, simulate_top_fixes
+from action_tracker import STATUS_OPTIONS, load_tracker, save_tracker
 
 def _render_narrative_trend(all_entries: list) -> None:
     """Render a plain-language diff between the two most recent entries."""
@@ -292,6 +294,12 @@ if st.button("Run Assessment", type="primary") or st.session_state.pop("_trigger
     st.session_state["_org_name_snap"] = org_name
     st.session_state["_org_size_snap"] = org_size
 
+    # Initialise Action Tracker session state from persisted data
+    _tk_data = load_tracker(org_name)
+    for _f in results["findings"]:
+        st.session_state[f"_tk_{_f['id']}"] = _tk_data.get(_f["id"], {}).get("status", "To Do")
+    st.session_state["_tracker_org"] = org_name
+
 if "_results" not in st.session_state:
     all_entries = get_all_assessments(org_name)
     if len(all_entries) >= 2:
@@ -320,16 +328,32 @@ else:
     org_name_snap = st.session_state["_org_name_snap"]
     org_size_snap = st.session_state["_org_size_snap"]
 
+    # Ensure tracker session state is initialised (e.g. after page refresh)
+    if st.session_state.get("_tracker_org") != org_name_snap:
+        _tk_data = load_tracker(org_name_snap)
+        for _f in results["findings"]:
+            st.session_state[f"_tk_{_f['id']}"] = _tk_data.get(_f["id"], {}).get("status", "To Do")
+        st.session_state["_tracker_org"] = org_name_snap
+
+    # Compute completion % from current session state
+    _finding_ids = [f["id"] for f in results["findings"]]
+    _done_count = sum(1 for fid in _finding_ids if st.session_state.get(f"_tk_{fid}") == "Done")
+    _inprog_count = sum(1 for fid in _finding_ids if st.session_state.get(f"_tk_{fid}") == "In Progress")
+    _completion_pct = round(100 * _done_count / len(_finding_ids)) if _finding_ids else 0
+
     st.markdown("---")
     st.subheader("Results Dashboard")
     score_delta = results["overall_score"] - prior["overall_score"] if prior else None
-    c1, c2, c3 = st.columns(3)
+    c1, c2, c3, c4 = st.columns(4)
     c1.metric("Overall Score", f"{results['overall_score']}/100",
               delta=score_delta, delta_color="normal" if score_delta else "off")
     c2.metric("Risk Level", results["risk_level"],
               delta=f"was {prior['risk_level']} on {prior['date']}" if prior and prior["risk_level"] != results["risk_level"] else None,
               delta_color="off")
     c3.metric("Unmet Controls", str(len(results["findings"])))
+    c4.metric("Actions Resolved", f"{_completion_pct}%",
+              delta=f"{_done_count} done · {_inprog_count} in progress" if (_done_count + _inprog_count) else None,
+              delta_color="off")
 
     # --- How is my score calculated? ---
     with st.expander("🔍 How is my score calculated?"):
@@ -936,3 +960,59 @@ Higher ROI score → control appears earlier in your priority action list.
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
+    # -----------------------------------------------------------------------
+    # Action Tracker
+    # -----------------------------------------------------------------------
+    st.markdown("---")
+    st.subheader("Action Tracker")
+    st.caption(
+        "Mark each recommended action as In Progress or Done. "
+        "Progress is saved automatically and reflected in the Actions Resolved metric above."
+    )
+
+    if not results["findings"]:
+        st.success("No unmet controls — nothing to track!")
+    else:
+        # Progress bar
+        st.progress(_completion_pct / 100, text=f"{_completion_pct}% complete ({_done_count}/{len(_finding_ids)} resolved)")
+
+        STATUS_ICON = {"To Do": "⬜", "In Progress": "🔄", "Done": "✅"}
+
+        # Group findings by category for a cleaner layout
+        _findings_by_cat: dict = defaultdict(list)
+        for _f in results["findings"]:
+            _findings_by_cat[_f["category"]].append(_f)
+
+        _tracker_changed = False
+        for _cat, _cat_findings in _findings_by_cat.items():
+            _cat_done = sum(1 for _f in _cat_findings if st.session_state.get(f"_tk_{_f['id']}") == "Done")
+            with st.expander(f"**{_cat}** — {_cat_done}/{len(_cat_findings)} done", expanded=(_cat_done < len(_cat_findings))):
+                for _f in _cat_findings:
+                    _tk_key = f"_tk_{_f['id']}"
+                    _col_q, _col_s = st.columns([5, 2])
+                    with _col_q:
+                        st.markdown(f"{STATUS_ICON.get(st.session_state.get(_tk_key, 'To Do'), '⬜')} {_f['question']}")
+                        st.caption(f"Fix: {_f['remediation']}")
+                    with _col_s:
+                        _new_val = st.selectbox(
+                            "Status",
+                            options=STATUS_OPTIONS,
+                            index=STATUS_OPTIONS.index(st.session_state.get(_tk_key, "To Do")),
+                            key=f"_sel_{_f['id']}",
+                            label_visibility="collapsed",
+                        )
+                        if _new_val != st.session_state.get(_tk_key):
+                            st.session_state[_tk_key] = _new_val
+                            _tracker_changed = True
+
+        # Persist on every render so changes are never lost
+        _tracker_payload = {
+            _f["id"]: {
+                "status": st.session_state.get(f"_tk_{_f['id']}", "To Do"),
+            }
+            for _f in results["findings"]
+        }
+        save_tracker(org_name_snap, _tracker_payload)
+
+        if _tracker_changed:
+            st.rerun()
