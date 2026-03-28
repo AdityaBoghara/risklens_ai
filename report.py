@@ -285,6 +285,19 @@ def generate_ai_report(payload: Dict) -> str:
     org_size_notes = payload.get("org_size_specific_notes", "")
     dominant_threats = ", ".join(payload.get("dominant_threats", [])) or "ransomware, credential theft"
 
+    # Derive plan depth and section verbosity from org size
+    _plan_depth = {
+        "1-10": {"plan_items": 2, "section_sentences": 2, "tool_specificity": "free or built-in tools only"},
+        "11-50": {"plan_items": 3, "section_sentences": 3, "tool_specificity": "named SaaS products where possible"},
+        "51-200": {"plan_items": 4, "section_sentences": 4, "tool_specificity": "named products and brief team coordination note"},
+        "201-1000": {"plan_items": 5, "section_sentences": 5, "tool_specificity": "named products, procurement path, and owner role"},
+        "1000+": {"plan_items": 5, "section_sentences": 5, "tool_specificity": "named products, owner role, and governance/audit implication"},
+    }
+    depth = _plan_depth.get(org_size, {"plan_items": 3, "section_sentences": 3, "tool_specificity": "named tools where possible"})
+    plan_items_n = depth["plan_items"]
+    section_sentences = depth["section_sentences"]
+    tool_specificity = depth["tool_specificity"]
+
     system_prompt = (
         f"You are a cyber risk triage advisor — not a report writer. "
         f"Your job is to make hard prioritization calls and tell the organization exactly what to do next, in order. "
@@ -294,45 +307,73 @@ def generate_ai_report(payload: Dict) -> str:
         f"TRIAGE RULES YOU MUST FOLLOW:\n"
         f"- Reason only from the provided JSON data. Do not invent controls or threats not present in the data.\n"
         f"- Make a single committed decision in every section — never list alternatives or say 'it depends'.\n"
-        f"- Calibrate every recommendation to the capacity of a {org_size}-person {org_type} organization.\n"
-        f"- Use plain language. Avoid jargon. A non-technical executive must be able to act on this immediately.\n"
+        f"- Use plain language. A non-technical executive must be able to act on this immediately.\n"
         f"- The dominant threats for this org are: {dominant_threats}. Every priority decision must connect back to these threats.\n"
-        f"- If a control is blocked by a dependency, do not recommend it as a first action."
+        f"- If a control is in blocked_by_dependencies, never recommend it before its blocker.\n\n"
+        f"PRIORITIZATION ORDERING (apply in every ranked list):\n"
+        f"  Primary key:   roi_score descending\n"
+        f"  Tiebreaker 1: simulation_gain_hint descending\n"
+        f"  Tiebreaker 2: effort ascending (Low < Medium < High)\n"
+        f"  Always surface unblocked controls before blocked ones.\n\n"
+        f"SPECIFICITY FLOOR — every remediation step must name {tool_specificity}. "
+        f"Do not write 'enable MFA'; write 'enable MFA in [product] via [specific setting path]'. "
+        f"Do not write 'improve patching'; write 'configure automatic OS updates in [product] and verify with [check]'.\n\n"
+        f"ORG-SIZE OUTPUT CALIBRATION for {org_size} employees:\n"
+        f"  - Each narrative section: {section_sentences} sentences maximum.\n"
+        f"  - 30-Day Plan: exactly {plan_items_n} items (do not pad with lower-ROI items to reach 5).\n"
+        f"  - If org_size is '1-10': every action must be completable solo in under one day; omit anything requiring procurement or dedicated staff.\n"
+        f"  - If org_size is '11-50': every action must be deliverable by one part-time IT contact or an MSP; flag anything requiring a dedicated hire.\n"
+        f"  - If org_size is '51-200': actions may require multi-day effort but must fit within existing IT bandwidth; note if a vendor engagement is needed.\n"
+        f"  - If org_size is '201-1000' or '1000+': governance, compliance, and cross-team coordination details are expected."
     )
 
     confidence_count = len(payload.get("confidence_notes", []))
 
     user_prompt = (
-        "Triage the assessment JSON below. Produce output with EXACTLY these six sections — no extras, no reordering.\n\n"
+        "Triage the assessment JSON below. Produce output with EXACTLY these six sections in this order — no extras, no reordering.\n\n"
         "## Biggest Risk Right Now\n"
-        "Name the single unresolved control that poses the greatest threat to this specific org type and size. "
-        "In 2–3 sentences: what is the control, why does it rank #1 given the dominant threats, "
-        "and what is the business consequence if it is not addressed?\n\n"
+        f"Select the single unresolved control with the highest roi_score among unblocked findings. "
+        f"If two controls tie on roi_score, pick the one with the higher simulation_gain_hint; if still tied, pick lower effort. "
+        f"Write {section_sentences} sentences maximum: name the specific control (not the category), "
+        f"state the roi_score and simulation_gain_hint from the JSON, "
+        f"identify which dominant threat it directly enables, "
+        f"and state the concrete business consequence (data breach / downtime / regulatory fine) if left unresolved. "
+        f"Do not use the word 'risk' as a noun — name the actual threat actor behaviour.\n\n"
         "## Best Quick Win\n"
-        "Name one action the org can complete this week with minimal effort. "
-        "State: what it is, effort level, time-to-value, and which specific threat it removes. "
-        "Calibrate 'minimal effort' to the org's size — do not recommend actions requiring dedicated security staff "
-        "if the org has fewer than 50 employees.\n\n"
+        f"Select the top-ranked item from quick_wins (highest roi_score, unblocked). "
+        f"Write {section_sentences} sentences maximum. "
+        f"State: the exact remediation step with {tool_specificity}, effort level from the JSON, "
+        f"time-to-value from the JSON, and the specific threat tag(s) it removes. "
+        f"Do not recommend this action if it appears in blocked_by_dependencies — pick the next unblocked quick_win instead.\n\n"
         "## Best 30-Day Plan\n"
-        "Provide a week-by-week action sequence drawn from best_30_day_bundle. "
-        "For each week: name the control, state effort, state the threat it closes. "
-        "Sequence these so each week builds on the last (dependency order). "
-        "If a control is in blocked_by_dependencies, move it after its blocker.\n\n"
+        f"Draw exactly {plan_items_n} items from best_30_day_bundle, ordered by roi_score descending "
+        f"(tiebreak: simulation_gain_hint desc, effort asc). "
+        f"Do not include more than {plan_items_n} items even if the bundle has more. "
+        f"Format each item as: 'Week N — [control name]: [specific remediation step with {tool_specificity}] "
+        f"(effort: X, closes: [threat tag])'. "
+        f"If a control is in blocked_by_dependencies, move it after the item that unblocks it and note '(requires Week M first)'. "
+        f"Each week must build on the previous — no item may assume capabilities not established by prior weeks.\n\n"
         "## Highest-Impact Fix\n"
-        "Use best_single_fix_simulation. Name the single control whose remediation would produce the largest "
-        "score improvement. State the projected point gain and why that control has outsized leverage "
-        "relative to its effort.\n\n"
+        f"Use best_single_fix_simulation. Name the control exactly as it appears in the JSON. "
+        f"State the simulation_gain_hint point gain. "
+        f"In {min(section_sentences, 3)} sentences: explain why this control has outsized leverage "
+        f"(i.e., what downstream controls it unblocks or what threats it severs at the root). "
+        f"If this control is in blocked_by_dependencies, name the blocker and state what must be done first.\n\n"
         "## Why These Actions Matter\n"
-        "In 3–5 sentences: connect the recommended actions to the specific threat landscape of a "
-        f"{org_type} organization of {org_size} employees. Reference the org_type_specific_notes and "
-        "org_size_specific_notes from the JSON. Explain why the sequencing is correct for this org's capacity.\n\n"
+        f"Write exactly {section_sentences} sentences. "
+        f"Sentence 1: connect the #1 risk to the specific threat landscape in org_type_specific_notes. "
+        f"Sentence 2: explain why the 30-day sequence is ordered correctly for a {org_size}-person org "
+        f"(reference the capacity constraint in org_size_specific_notes). "
+        f"Sentence 3: name the dominant_threats from the JSON and explain how the full plan dismantles them. "
+        + (f"Sentences 4–{section_sentences}: governance and compliance framing relevant to {org_type}. " if section_sentences > 3 else "")
+        + "Do not repeat content from other sections — synthesize it.\n\n"
         "## Confidence / Unknowns\n"
         + (
-            f"There are {confidence_count} controls answered 'Don't Know' in confidence_notes. "
-            "For each one, write:\n"
-            "- Control name and category\n"
-            "- What the actual risk exposure is IF the control already exists (i.e., score may be inflated)\n"
-            "- One concrete action to resolve the uncertainty within 5 business days\n"
+            f"There are {confidence_count} controls in confidence_notes answered 'Don't Know'. "
+            f"For each one write exactly three lines:\n"
+            f"  - Control: [name] | Category: [category]\n"
+            f"  - If already in place: [what the score overstatement is — which category score would improve and by how much]\n"
+            f"  - Resolution: [one concrete step to confirm within 5 business days, using {tool_specificity}]\n"
             if confidence_count > 0
             else "All controls were answered — no confidence gaps to report.\n"
         )

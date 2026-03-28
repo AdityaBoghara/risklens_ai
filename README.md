@@ -2,6 +2,45 @@
 
 Cyber risk assessment assistant for small organizations — built for HackMISSO 2026.
 
+## Architecture
+
+![Architecture diagram](architecture.svg)
+
+```mermaid
+flowchart TD
+    U([User / Browser]) --> APP
+
+    subgraph APP["Streamlit UI — app.py"]
+        Q[Questionnaire\nOrg type · 4-pt scale]
+        D[Risk Dashboard\nScore · radar · trends]
+        S[What-If Simulator\nFix preview · bundles]
+        A[Action Plan\nTop actions · quick wins]
+        E[Export / History\nCSV · change narrative]
+    end
+
+    APP --> SCO
+    APP --> SIM
+    APP --> REP
+    APP --> BEN
+    APP --> HIS
+
+    SCO["scoring.py\nRisk Calculation Engine\n─────────────────\nOrg-type weight overrides\nPer-category scoring\nROI = risk×time / effort\nDependency blocking\nThreat tag aggregation"]
+    SIM["simulator.py\nWhat-If Simulator\n─────────────────\nsimulate_fix(answers, id)\nsimulate_top_fixes(N)\nsimulate_bundle(ids)"]
+    REP["report.py\nAI Report Generator\n─────────────────\nbuild_llm_payload()\ngpt-4o-mini or demo fallback\n30-day action plan"]
+    BEN["benchmarks.py\nPeer Comparison\n─────────────────\nSector baselines\npeer_comparison()"]
+    HIS["history.py\nAssessment Persistence\n─────────────────\nsave / get_last / get_all"]
+
+    SCO --> DAT
+    SIM --> DAT
+    REP --> DAT
+    HIS --> HST[("assessment_history.json")]
+    DAT --> QJ[("questions.json")]
+
+    DAT["data.py — Question Registry\n─────────────────\nQuestion dataclass · answer/urgency factors\nORG_TYPE_WEIGHT_OVERRIDES"]
+
+    REP -. "if OPENAI_API_KEY" .-> OAI["OpenAI API\ngpt-4o-mini"]
+```
+
 ## What it does
 
 - Runs a structured cybersecurity questionnaire tailored to your sector (clinic, school, nonprofit, startup, small business)
