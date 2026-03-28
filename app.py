@@ -244,20 +244,77 @@ else:
             delta_color="normal",
             help=f"Sector baseline: {baseline['overall']}/100",
         )
-        st.markdown("**Category breakdown:**")
-        peer_cols = st.columns(len(comparisons))
-        for col, c in zip(peer_cols, comparisons):
-            col.metric(
-                c["category"],
-                f"{c['org_score']}/100",
-                delta=c["delta"],
-                delta_color="normal",
-                help=f"Sector baseline: {c['baseline_score']}/100",
+
+        # Grouped bar chart: org vs baseline per category
+        bench_cats = [c["category"] for c in comparisons]
+        bench_org = [c["org_score"] for c in comparisons]
+        bench_base = [c["baseline_score"] for c in comparisons]
+        bench_colors = []
+        for c in comparisons:
+            if c["status"] == "above":
+                bench_colors.append("#2ca02c")
+            elif c["status"] == "below":
+                bench_colors.append("#d62728")
+            else:
+                bench_colors.append("#1f77b4")
+        bench_fig = go.Figure(data=[
+            go.Bar(name="Your Score", x=bench_cats, y=bench_org, marker_color=bench_colors),
+            go.Bar(name="Sector Baseline", x=bench_cats, y=bench_base, marker_color="rgba(150,150,150,0.5)"),
+        ])
+        bench_fig.update_layout(
+            barmode="group",
+            yaxis=dict(range=[0, 100], title="Score"),
+            height=280,
+            margin=dict(t=10, b=10, l=40, r=20),
+            legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1),
+        )
+        st.plotly_chart(bench_fig, use_container_width=True)
+
+        # Comparison table
+        STATUS_ICON = {"above": "✅ Above", "on-par": "➖ On par", "below": "🔴 Below"}
+        tbl_rows = ""
+        for c in comparisons:
+            delta_str = f"+{c['delta']}" if c['delta'] > 0 else str(c['delta'])
+            status_str = STATUS_ICON.get(c["status"], c["status"])
+            tbl_rows += (
+                f"<tr>"
+                f"<td style='padding:5px 10px'>{c['category']}</td>"
+                f"<td style='padding:5px 10px;text-align:center'><b>{c['org_score']}</b></td>"
+                f"<td style='padding:5px 10px;text-align:center'>{c['baseline_score']}</td>"
+                f"<td style='padding:5px 10px;text-align:center'>{delta_str}</td>"
+                f"<td style='padding:5px 10px;text-align:center'>{status_str}</td>"
+                f"</tr>"
             )
+        # Overall row
+        ov_delta_str = f"+{overall_delta}" if overall_delta > 0 else str(overall_delta)
+        tbl_rows += (
+            f"<tr style='font-weight:bold;border-top:2px solid #ccc'>"
+            f"<td style='padding:5px 10px'>Overall</td>"
+            f"<td style='padding:5px 10px;text-align:center'>{results['overall_score']}</td>"
+            f"<td style='padding:5px 10px;text-align:center'>{baseline['overall']}</td>"
+            f"<td style='padding:5px 10px;text-align:center'>{ov_delta_str}</td>"
+            f"<td style='padding:5px 10px;text-align:center'>"
+            f"{'✅ Above' if overall_delta > 3 else ('🔴 Below' if overall_delta < -3 else '➖ On par')}"
+            f"</td>"
+            f"</tr>"
+        )
+        st.markdown(
+            "<table style='width:100%;border-collapse:collapse;font-size:0.88rem'>"
+            "<thead><tr style='background:#f0f0f0'>"
+            "<th style='padding:5px 10px;text-align:left'>Category</th>"
+            "<th style='padding:5px 10px'>You</th>"
+            "<th style='padding:5px 10px'>Sector avg</th>"
+            "<th style='padding:5px 10px'>Delta</th>"
+            "<th style='padding:5px 10px'>Status</th>"
+            f"</tr></thead><tbody>{tbl_rows}</tbody></table>",
+            unsafe_allow_html=True,
+        )
+
         common_weak = baseline["common_weak_spots"]
         st.caption(
             f"Common weak spots for {org_type_snap}s: "
             + ", ".join(f"**{w}**" for w in common_weak)
+            + ". Baselines are design-derived heuristics, not external survey data."
         )
 
     st.subheader("Controls Traffic Light")
@@ -300,26 +357,39 @@ else:
             st.write(f"Why it matters: {action['why_it_matters']}")
             st.write(f"Framework mapping: {action['framework_map']}")
 
-    # --- Section B: Best Next Fix ---
+    # --- Section B: Best Next Fix (top simulation result) ---
     if top_sims:
         best = top_sims[0]
-        finding = next(
-            (f for f in results["findings_by_roi"] if f["id"] == best["question_id"]),
-            None,
-        )
         st.markdown("---")
         with st.container(border=True):
             st.markdown("### Best Next Fix")
+            st.caption(f"{best.get('category', '')} · {'⚡ Quick Win' if best.get('quick_win') else 'Strategic Fix'}")
             st.markdown(f"**{best['question']}**")
             b1, b2, b3, b4 = st.columns(4)
             b1.metric("Score Gain", f"+{best['score_delta']} pts")
-            b2.metric("Effort", finding["effort"] if finding else "—")
-            b3.metric("Time to Value", finding["time_to_value"] if finding else "—")
+            b2.metric("Effort", best.get("effort", "—"))
+            b3.metric("Time to Value", best.get("time_to_value", "—"))
             b4.metric("Risk Level After", best["risk_level_after"])
             if best.get("threats_reduced"):
                 st.markdown(
                     "Threats mitigated: " + ", ".join(f"`{t}`" for t in best["threats_reduced"])
                 )
+            if best.get("remediation"):
+                st.info(f"**How to fix:** {best['remediation']}")
+
+    # --- Ranked simulation results ---
+    if len(top_sims) > 1:
+        with st.expander(f"See all top {len(top_sims)} single-fix simulations"):
+            for i, sim in enumerate(top_sims, 1):
+                cols = st.columns([4, 1, 1, 1])
+                label = f"**{i}. {sim['question']}**"
+                if sim.get("quick_win"):
+                    label += " ⚡"
+                cols[0].markdown(label)
+                cols[0].caption(sim.get("category", ""))
+                cols[1].metric("Score +", f"{sim['score_delta']} pts")
+                cols[2].metric("Effort", sim.get("effort", "—"))
+                cols[3].metric("Time", sim.get("time_to_value", "—"))
 
     # --- Section C: What If Simulator ---
     # Use all failing controls as options so every unmet control is selectable,
@@ -385,6 +455,18 @@ else:
                     "**Threats reduced:** " + ", ".join(f"`{t}`" for t in sim_result["threats_reduced"])
                 )
 
+            # Show remediation steps for each selected control
+            selected_sims = [s for s in top_sims if s["question_id"] in selected_ids]
+            # Also pull from sim_pool for controls not in top_sims
+            sim_pool_by_id = {f["id"]: f for f in sim_pool}
+            st.markdown("**Remediation steps:**")
+            for qid in selected_ids:
+                match = next((s for s in top_sims if s["question_id"] == qid), None)
+                label = match["question"] if match else sim_pool_by_id.get(qid, {}).get("question", qid)
+                fix = match.get("remediation") if match else sim_pool_by_id.get(qid, {}).get("remediation")
+                if fix:
+                    st.markdown(f"- **{label}**: {fix}")
+
     # --- Section D: Quick Wins vs Strategic Fixes ---
     quick_wins = results["quick_wins"]
     strategic = [f for f in results["findings_by_risk"] if not f["quick_win"]]
@@ -399,9 +481,13 @@ else:
         if quick_wins:
             for f in quick_wins[:5]:
                 with st.container(border=True):
-                    st.markdown(f"**{f['category']}**")
+                    st.markdown(f"**{f['category']}** — `{f['urgency']}` urgency")
                     st.write(f["question"])
                     st.caption(f"Effort: {f['effort']} · Time to Value: {f['time_to_value']}")
+                    if f.get("follow_up_if_no"):
+                        st.info(f["follow_up_if_no"])
+                    if f.get("business_impact"):
+                        st.caption(f"Business impact: {f['business_impact']}")
         else:
             st.info("No quick wins identified — focus on strategic fixes first.")
 
@@ -411,9 +497,13 @@ else:
         if strategic:
             for f in strategic[:5]:
                 with st.container(border=True):
-                    st.markdown(f"**{f['category']}**")
+                    st.markdown(f"**{f['category']}** — `{f['urgency']}` urgency")
                     st.write(f["question"])
                     st.caption(f"Risk Score: {f['risk_score']} · Effort: {f['effort']}")
+                    if f.get("follow_up_if_no"):
+                        st.info(f["follow_up_if_no"])
+                    if f.get("business_impact"):
+                        st.caption(f"Business impact: {f['business_impact']}")
         else:
             st.info("No high-risk strategic gaps identified.")
 

@@ -61,8 +61,11 @@ def _slim_finding(item: Dict) -> Dict:
         "risk_score": item["risk_score"],
         "effort": item["effort"],
         "time_to_value": item["time_to_value"],
+        "urgency": item["urgency"],
         "remediation": item["remediation"],
         "why_it_matters": item["why_it_matters"],
+        "business_impact": item["business_impact"],
+        "follow_up_if_no": item["follow_up_if_no"],
         "threats": item["threats"],
         "simulation_gain_hint": item["simulation_gain_hint"],
         "framework_map": item["framework_map"],
@@ -245,12 +248,15 @@ def generate_ai_report(payload: Dict) -> str:
         f"Assessment JSON:\n{json.dumps(payload, indent=2)}"
     )
 
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": system_prompt},
-            {"role": "user", "content": user_prompt},
-        ],
-        temperature=0.2,
-    )
-    return response.choices[0].message.content
+    try:
+        response = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt},
+            ],
+            temperature=0.2,
+        )
+        return response.choices[0].message.content
+    except Exception:
+        return generate_demo_report(payload)

@@ -56,11 +56,18 @@ def simulate_top_fixes(answers: Dict[str, str], org_type: str = "", limit: int =
     failing_ids = [f["id"] for f in before["findings"]]
 
     results = []
+    finding_by_id = {f["id"]: f for f in before["findings"]}
     for qid in failing_ids:
         sim = simulate_fix(answers, qid, org_type)
-        sim["question"] = next(f["question"] for f in before["findings"] if f["id"] == qid)
-        sim["roi_score"] = next(f["roi_score"] for f in before["findings"] if f["id"] == qid)
-        sim["quick_win"] = next(f["quick_win"] for f in before["findings"] if f["id"] == qid)
+        f = finding_by_id[qid]
+        sim["question"] = f["question"]
+        sim["category"] = f["category"]
+        sim["roi_score"] = f["roi_score"]
+        sim["quick_win"] = f["quick_win"]
+        sim["effort"] = f["effort"]
+        sim["time_to_value"] = f["time_to_value"]
+        sim["remediation"] = f["remediation"]
+        sim["threats"] = f["threats"]
         results.append(sim)
 
     results.sort(key=lambda x: (x["score_delta"], x["roi_score"]), reverse=True)

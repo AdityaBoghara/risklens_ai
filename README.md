@@ -3,22 +3,25 @@
 Cyber risk assessment assistant for small organizations — built for HackMISSO 2026.
 
 ## What it does
-- Runs a structured cybersecurity questionnaire tailored to your sector
-- Calculates an overall risk score and per-category scores with sector-aware weighting
-- Ranks remediation actions by ROI (impact vs. effort) for actionable prioritization
-- Simulates "what if we fix this?" to show score improvements before committing resources
-- Compares your posture against peer baselines for clinics, schools, nonprofits, startups, and small businesses
-- Generates an AI triage report with plain-language reasoning and a 30-day action plan
-- Tracks assessment history and surfaces narrative trends across runs
-- Exports results to CSV
+
+- Runs a structured cybersecurity questionnaire tailored to your sector (clinic, school, nonprofit, startup, small business)
+- Calculates a 0–100 risk score and per-category scores using sector-aware weighting
+- Ranks every unmet control by ROI (risk impact ÷ effort × time-to-value)
+- Simulates "what if we fix this?" — shows projected score gain and risk-level change before committing resources
+- Compares your scores against sector peer baselines in a category-by-category table (baselines are expert-heuristic estimates, not external survey data)
+- Generates a plain-language report with a 30-day action plan — LLM-powered if an OpenAI key is present, deterministic demo output otherwise
+- Tracks assessment history and surfaces what changed between runs
+- Exports the full assessment to CSV
 
 ## Stack
+
 - Streamlit
-- Pure Python scoring and simulation engine
-- OpenAI API (optional) — for AI-generated reports
+- Pure Python scoring and simulation engine (no ML, fully deterministic)
+- OpenAI API (optional) — gpt-4o-mini for report generation; falls back to a built-in demo report without a key
 - python-dotenv
 
 ## Run locally
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
@@ -27,42 +30,42 @@ streamlit run app.py
 ```
 
 ## Environment variables
-Use either shell export or a `.env` file in the project root.
 
-Option 1 (shell):
+Optional. Required only for LLM-powered reports.
+
 ```bash
 export OPENAI_API_KEY=your_key_here
 ```
 
-Option 2 (dotenv file `.env`):
-```dotenv
-OPENAI_API_KEY=your_key_here
-```
+Or add to a `.env` file in the project root — loaded automatically via python-dotenv.
 
-The app loads `.env` automatically via `python-dotenv`. Without an API key it falls back to a deterministic demo report.
+Without a key the app is fully functional; the AI report section renders a deterministic demo report instead.
 
-## Core design
-- Deterministic scoring for transparency
-- ROI-aware prioritization for action sequencing
-- Simulation engine for "what should we fix first"
-- AI triage agent for plain-language reasoning and 30-day planning
-- Sector-aware weighting for clinics, schools, nonprofits, and startups
+## Design decisions
+
+- **Deterministic scoring** — every score is reproducible from the same answers; no randomness or ML inference in the core engine
+- **ROI-first prioritization** — controls are ranked by `(risk_score × time_to_value_factor) / effort_factor`, not just severity
+- **Sector weighting** — question weights are adjusted per org type so a clinic's HIPAA-adjacent controls carry more weight than a startup's
+- **Heuristic baselines** — peer comparison figures are derived from assessment design assumptions, not collected survey data; they are directionally useful but not statistically validated
 
 ## Demo flow
-1. Answer assessment
-2. Review risk dashboard
-3. Inspect biggest risk
-4. Simulate one fix
-5. Compare peer baseline
-6. Read AI-generated action plan
+
+1. Set org type in the sidebar
+2. Answer the questionnaire (unanswered questions default to "Don't Know")
+3. Click **Run Assessment**
+4. Review the risk dashboard and biggest exposure
+5. Check the peer comparison table
+6. Use the What If Simulator to project the impact of specific fixes
+7. Read the action plan
 
 ## Files
-- `app.py` — Streamlit UI and app orchestration
+
+- `app.py` — Streamlit UI and orchestration
 - `scoring.py` — weighted scoring engine and ROI prioritization
 - `simulator.py` — fix simulation and score-delta calculations
-- `benchmarks.py` — sector peer baselines
+- `benchmarks.py` — sector peer baselines and comparison logic
 - `history.py` — assessment history persistence
-- `report.py` — AI report generation and LLM payload builder
-- `data.py` — questions, category definitions, and org-type weight overrides
+- `report.py` — report generation (LLM payload builder + OpenAI call + demo fallback)
+- `data.py` — question dataclass, category definitions, org-type weight overrides
 - `questions.json` — question bank
 - `requirements.txt` — dependencies
